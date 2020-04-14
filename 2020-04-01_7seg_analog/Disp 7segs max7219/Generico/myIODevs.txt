@@ -1,0 +1,24 @@
+﻿Push Button 1 wired to pin -1 with values D, M
+Push Button 2 wired to pin -1 with values D, M
+Switched Resistor 1 wired to pin -1 with value D
+Switched Resistor 2 wired to pin -1 with value D
+Switched Resistor 3 wired to pin -1 with value D
+Switched Resistor 4 wired to pin -1 with value D
+Piezo Speaker 1 wired to pin -1 
+Piezo Speaker 2 wired to pin -1 
+Coloured LED 1 wired to pin -1 with values D, R
+Coloured LED 2 wired to pin -1 with values D, R
+7-Segment LED 1 wired to pins -1, -1, -1, -1, -1 with value R
+7-Segment LED 2 wired to pins -1, -1, -1, -1, -1 with value R
+4-LED Row 1 wired to pins -1, -1, -1, -1 with values D, R
+Pin Jumper 1 wired to pins -1, -1 
+Analog Slider 1 wired to pin -1 
+Analog Slider 2 wired to pin -1 
+Multiplexer LED (SPI) 1 wired to pins 11, -1, -1 
+USB Serial 1 wired to pins 1, 0 with value 9600
+TFT Display 1 wired to pins 11, -1, 13, -1 
+SFT Serial 1 wired to pins -1, -1 with values 300, F
+SPI Slave 1 wired to pins 11, 12, -1, 13 with values 0, 0xff
+I2C Slave 1 wired to pins A4, A5 with values 0x1, 100
+DC Motor 1 wired to pins -1, -1, -1 
+Digital Pulser 1 wired to pin -1 with values R, 1000, 10000, U, U, u

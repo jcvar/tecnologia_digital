@@ -1,0 +1,14 @@
+﻿en
+auto indent format 1
+auto insert closing-} 0
+auto insert semicolons 0
+allow expert syntax 1
+enforce array bounds 1
+keyword logical operators 0
+show program download 1
+font typeface number 2
+font typesize number 2
+tab size multiplier 2
+'Uno' board version 2
+TWI buffer length 32
+IODevs file name myIODevs.txt
