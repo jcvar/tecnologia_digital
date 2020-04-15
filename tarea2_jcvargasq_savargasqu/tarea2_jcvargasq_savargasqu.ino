@@ -27,6 +27,7 @@ const int B = 0x001F;
 const int Y = 0xFFE0;
 // Background color
 const int K = 0x0000;
+const int led_colors[4] = {R, G, B, Y};
 
 // Size of circle representing the LED
 #define led_size   16
@@ -37,7 +38,7 @@ const int K = 0x0000;
 const int sensorA = A0;
 const int sensorB = A1;
 
-// Strings to print to the screen
+// Strings to print to the screen (one extra char, Arduino ref.)
 const int strSize = 4;
 char printoutA[strSize] = {0, 0, 0};
 char printoutB[strSize] = {0, 0, 0};
@@ -49,9 +50,8 @@ int oldA = 0;
 int oldB = 0;
 int diff;
 
-int pos;
-int new_clr;
-int old_clr = K;
+int new_led;
+int old_led = -1;
 
 // Convert integer value to string
 void ints_to_strings(int vA, int vB){
@@ -67,20 +67,14 @@ void ints_to_strings(int vA, int vB){
 }
 
 // Turn off all LED circles except for one. Pass color as argument
-void turnON(int color, int x) {
-	if (color != old_clr){
-		old_clr = color;
+void turnON(int led) {
+	if (led != old_led){
+		old_led = led;
 		for (int i = 0; i < 4; i ++) {
 			TFTscreen.fillCircle(i*led_pos + led_offset, led_offset, led_size, K);
-			//ellipse(i, led_size, led_size, led_size); // (x, y, w, h);
+			TFTscreen.drawCircle(i*led_pos + led_offset, led_offset, led_size, led_colors[i]);
 		}
-		
-		TFTscreen.drawCircle(0*led_pos + led_offset, led_offset, led_size, R);
-		TFTscreen.drawCircle(1*led_pos + led_offset, led_offset, led_size, G);
-		TFTscreen.drawCircle(2*led_pos + led_offset, led_offset, led_size, B);
-		TFTscreen.drawCircle(3*led_pos + led_offset, led_offset, led_size, Y);
-		TFTscreen.fillCircle(x*led_pos + led_offset, led_offset, led_size, color);
-		//ellipse(x, led_size, led_size, led_size); // (x, y, w, h);
+		TFTscreen.fillCircle(led*led_pos + led_offset, led_offset, led_size, led_colors[led]);
 	}
 }
 
@@ -121,20 +115,20 @@ void loop() {
 	
 /****** Draw corresponding LED circle *****/	
 	if (valA >= 250){
-		new_clr = R; pos = 0;
+		new_led = 0;
 	} else if (valA < 180){
 		diff = valA - valB;
 		if (diff > 30 && diff < 70){
-			new_clr = Y; pos = 3;
+			new_led = 3;
 		} else if (diff >= 70){
-			new_clr = B; pos = 2;
+			new_led = 2;
 		} else {
-			new_clr = G; pos = 1;
+			new_led = 1;
 		}
 	} else {
-		new_clr = G; pos = 1;
+		new_led = 1;
 	}
-	turnON(new_clr, pos);
+	turnON(new_led);
 	// Plot pixel
-	TFTscreen.drawPixel(map(valA, 0, 300, 20, 140), map(valB, 0, 200, 127, 47), new_clr);
+	TFTscreen.drawPixel(map(valA, 0, 300, 20, 140), map(valB, 0, 200, 127, 47), led_colors[new_led]);
 }
