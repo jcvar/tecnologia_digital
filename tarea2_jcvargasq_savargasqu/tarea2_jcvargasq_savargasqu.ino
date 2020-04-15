@@ -7,129 +7,128 @@
     Sergio Alejandro Vargas Q. - savargasqu@unal.edu.co
     
     2020-04-13
-*/
 
 // TODO: Fix dimensional arguments
-
-#include <TFT.h>  // Arduino LCD library
+*/
+#include <TFT.h>
 #include <SPI.h>
 
-#define cs   10
-#define ds   9
-#define rst  8
-
+// Display parameters
+#define cs 10
+#define ds 9
+#define rst 8
+// Declare display
 TFT TFTscreen = TFT(cs, ds, rst);
 
-// Strings to print to the screen
-char printoutA[4];
-char printoutB[4];
-
-int aval;
-int aval;
-
-const int led_size = 32; // Size of LED representing circles
-
-// RGB 565: RRRR RGGG GGGB BBBB
+//  RGB 565 = RRRR RGGG GGGB BBBB
 const int R = 0xF800;
 const int G = 0x07E0;
 const int B = 0x001F;
 const int Y = 0xFFE0;
-const int BG = 0x0000; // Background color
+// Background color
+const int K = 0x0000;
+const int led_colors[4] = {R, G, B, Y};
+
+// Size of circle representing the LED
+#define led_size   16
+#define led_pos    40
+#define led_offset 20
 
 // Sensor pins
 const int sensorA = A0;
 const int sensorB = A1;
 
+// Strings to print to the screen (one extra char, Arduino ref.)
+const int strSize = 4;
+char printoutA[strSize] = {0, 0, 0};
+char printoutB[strSize] = {0, 0, 0};
+
 // Sketch variables 
 int valA;
 int valB;
+int oldA = 0;
+int oldB = 0;
 int diff;
 
+int new_led;
+int old_led = -1;
+
+// Convert integer value to string
+void ints_to_strings(int vA, int vB){
+	int numA, numB;
+	for(int i = 2; i>=0; i--){
+		numA = vA%10;
+		numB = vB%10;
+		printoutA[i] = '0' + numA;
+		printoutB[i] = '0' + numB;
+		vA/=10;
+		vB/=10;
+	}	
+}
+
 // Turn off all LED circles except for one. Pass color as argument
-void turnON(int color, int x) {
-	for (int i = led_size; i <= led_size*4; i += led_size) {
-	        TFTscreen.fillCircle(50, 60, 5, BG);
-		//ellipse(i, led_size, led_size, led_size); // (x, y, w, h);
+void turnON(int led) {
+	if (led != old_led){
+		old_led = led;
+		for (int i = 0; i < 4; i ++) {
+			TFTscreen.fillCircle(i*led_pos + led_offset, led_offset, led_size, K);
+			TFTscreen.drawCircle(i*led_pos + led_offset, led_offset, led_size, led_colors[i]);
+		}
+		TFTscreen.fillCircle(led*led_pos + led_offset, led_offset, led_size, led_colors[led]);
 	}
-	TFTscreen.fillCircle(50, 60, 5, color);
-	//ellipse(x, led_size, led_size, led_size); // (x, y, w, h);
+}
+
+void write_values(int vA, int vB){
+	if (vA != oldA){
+		oldA = vA;
+		TFTscreen.stroke(0, 0, 0);
+		TFTscreen.text(printoutA,  60, 40);
+		ints_to_strings(vA, vB);
+		TFTscreen.stroke(255, 255, 255);
+		TFTscreen.text(printoutA,  60, 40);
+	}
+	if (vB != oldB){
+		oldB = vB;
+		TFTscreen.stroke(0, 0, 0);
+		TFTscreen.text(printoutB, 140, 40);	
+		ints_to_strings(vA, vB);
+		TFTscreen.stroke(255, 255, 255);
+		TFTscreen.text(printoutB, 140, 40);
+	}
 }
 
 void setup() {
-	// Put this line at the beginning of every sketch that uses the GLCD:
 	TFTscreen.begin();
-	// clear the screen with a black background
 	TFTscreen.background(0, 0, 0);
-	// write the static text to the screen
-	// set the font color to white
-	TFTscreen.stroke(255, 255, 255);
-	// set the font size
-	TFTscreen.setTextSize(2);
-	// write the text to the top left corner of the screen
-	TFTscreen.text("Sensor 1 Value :\n ", 0, 0);
-	// set the font size very large for the loop
 	TFTscreen.setTextSize(1);
+	
+	TFTscreen.stroke(255, 255, 255);
+	TFTscreen.text("val A: ",  20, 40);
+	TFTscreen.text("val B: ", 100, 40);
 }
 
 void loop() {
-/****** Print valA and valB ******/
 	// Read Sensors
 	valA = map(analogRead(sensorA), 0, 1023, 0, 300);
 	valB = map(analogRead(sensorB), 0, 1023, 0, 200);
-	//convert to string
-	printoutA = intToString(valA);
-	printoutB = intToString(valB);
-	// set the font color white
-	TFTscreen.stroke(255, 255, 255);
-	// print the sensor value
-	TFTscreen.text(printoutA, 0, 20);
-	TFTscreen.text(printoutB, 0, 20);
-	// wait for a moment
-	delay(250);
-	// erase the text you just wrote
-	TFTscreen.stroke(0, 0, 0);
-	TFTscreen.text(printoutA, 0, 20);
-	TFTscreen.text(printoutB, 0, 20);
-
-/****** Draw corresponding LED circle *****/
+	write_values(valA, valB);
+	
+/****** Draw corresponding LED circle *****/	
 	if (valA >= 250){
-		turnON(R);
+		new_led = 0;
 	} else if (valA < 180){
 		diff = valA - valB;
 		if (diff > 30 && diff < 70){
-			turnON(Y);
+			new_led = 3;
 		} else if (diff >= 70){
-			turnON(B);
+			new_led = 2;
 		} else {
-			turnON(G);
+			new_led = 1;
 		}
 	} else {
-		turnON(G);
+		new_led = 1;
 	}
+	turnON(new_led);
+	// Plot pixel
+	TFTscreen.drawPixel(map(valA, 0, 300, 20, 140), map(valB, 0, 200, 127, 47), led_colors[new_led]);
 }
-
-char* intToString (int aval){
-	int mil, cen, dec, uni;
-        char sensorPrintout[4];
-
-	mil=(aval/1000) % 10;
-	cen=(aval/100) % 10;
-	dec=(aval/10) % 10;
-	uni=aval % 10;
-
-	sensorPrintout[0] = '0' + mil;
-	sensorPrintout[1] = '0' + cen;
-	sensorPrintout[2] = '0' + dec;
-	sensorPrintout[3] = '0' + uni;
-
-	if(mil == 0){
-		sensorPrintout[0] = ' ';
-		if(cen == 0){
-			sensorPrintout[1] = ' ';
-			if(dec == 0)sensorPrintout[2] = ' ';
-
-		}
-	}
-	return sensorPrintout;
-}
-
