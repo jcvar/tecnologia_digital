@@ -1,4 +1,4 @@
-Universidad Nacional De Colombia
+Universidad Nacional De Colombia\
 Tecnología Digital 2020-I
 
 Juan Camilo Vargas `jcvargasq@unal.edu.co`\
