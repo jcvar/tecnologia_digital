@@ -3,12 +3,13 @@ let R = '#FF0000';
 let G = '#00FF00';
 let B = '#0000FF';
 let Y ='#FFFF00';
+let BG ='#000000';
 let valA, valB;
 
 function turnON(color, x) {
-  for (let i = led_size; i < led_size*4; i += led_size) {
-    fill(0, 0, 0);
-    ellipse(x, led_size, led_size, led_size); // (x, y, w, h);
+  fill(BG);
+  for (let i = led_size; i <= led_size*4; i += led_size) {
+    ellipse(i, led_size, led_size, led_size); // (x, y, w, h);
   }
   fill(color);
   ellipse(x, led_size, led_size, led_size); // (x, y, w, h);
@@ -22,13 +23,13 @@ function setup() {
 }
 
 function draw() {
-  background(0);
   valA = mouseX; //map(analogRead(sensorA), 0, 1023, 0, 300);
   valB = mouseY; //map(analogRead(sensorB), 0, 1023, 0, 200);
-  
-  text(str(valA), 0, 50);
-  text(str(valB), 0, 100);
-  
+  fill(BG);
+  background(0);
+  text('valA: ' + str(valA), 0, 100);
+  text('valB: ' + str(valB), 100, 100);
+
   if (valA >= 250){
     turnON(R, led_size);
   }else if (valA < 180){
@@ -43,9 +44,5 @@ function draw() {
   }else{
     turnON(G, led_size*2);
   }
-  //turnON(R, led_size);
-  //turnON(G, led_size*2);
-  //turnON(B, led_size*3);
-  //turnON(Y, led_size*4);
 }
 
