@@ -1,2 +1,9 @@
-# tecnologia_digital
-Tecnología Digital 2020-1, Universidad Nacional de Colombia
+# Tecnología Digital
+
+Juan Camilo Vargas Q.\
+Sergio Alejandro Vargas Q.
+
+
+Facultad de Ingeniería\
+Universidad Nacional de Colombia\
+2020-1
