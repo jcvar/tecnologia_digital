@@ -1,7 +1,7 @@
 Universidad Nacional De Colombia
 Tecnología Digital 2020-I
 
-Juan Camilo Vargas `jcvargasq@unal.edu.co`
+Juan Camilo Vargas `jcvargasq@unal.edu.co`\
 Sergio Alejandro Vargas `savargasqu@unal.edu.co`
 
 ## Tarea 2 — Pantalla TFT:
