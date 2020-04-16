@@ -46,8 +46,8 @@ char printoutB[strSize] = {0, 0, 0};
 // Sketch variables 
 int valA;
 int valB;
-int oldA = 0;
-int oldB = 0;
+int oldA = -1;
+int oldB = -1;
 int diff;
 
 int new_led;
