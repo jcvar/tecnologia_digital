@@ -54,16 +54,18 @@ int new_led;
 int old_led = -1;
 
 // Convert integer value to string
-void ints_to_strings(int vA, int vB){
-	int numA, numB;
-	for(int i = 2; i>=0; i--){
-		numA = vA%10;
-		numB = vB%10;
-		printoutA[i] = '0' + numA;
-		printoutB[i] = '0' + numB;
-		vA/=10;
-		vB/=10;
-	}	
+void int_to_str(char arr[], int val){
+	int num;
+	for(int i = strSize - 2; i >=0; i--){
+		num = val%10;
+		arr[i] = '0' + num;
+		val/=10;
+	}
+	for(int i = 0; i < strSize - 2; i++){
+		if(arr[i] == '0'){
+			arr[i] = ' ';
+		}
+	}
 }
 
 // Turn off all LED circles except for one. Pass color as argument
@@ -83,7 +85,7 @@ void write_values(int vA, int vB){
 		oldA = vA;
 		TFTscreen.stroke(0, 0, 0);
 		TFTscreen.text(printoutA,  60, 40);
-		ints_to_strings(vA, vB);
+		int_to_str(printoutA, vA);
 		TFTscreen.stroke(255, 255, 255);
 		TFTscreen.text(printoutA,  60, 40);
 	}
@@ -91,7 +93,7 @@ void write_values(int vA, int vB){
 		oldB = vB;
 		TFTscreen.stroke(0, 0, 0);
 		TFTscreen.text(printoutB, 140, 40);	
-		ints_to_strings(vA, vB);
+		int_to_str(printoutB, vB);
 		TFTscreen.stroke(255, 255, 255);
 		TFTscreen.text(printoutB, 140, 40);
 	}
