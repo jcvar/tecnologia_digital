@@ -25,6 +25,11 @@ TFT tft = TFT(cs, dc, rst);
 #define MENU4 3
 #define NONE  4
 
+const int length_MENU1 =  250;
+const int length_MENU2 =  500;
+const int length_MENU3 = 1000;
+const int length_MENU4 = 2000;
+
 int buttonEnterPin=6;
 
 enum buttonEnter_t {	lowValue,highValue};
@@ -86,8 +91,8 @@ void dispatch(){
 		case s2:
 			if(menuSel==MENU1) menu1Fcn();
 			if(menuSel==MENU2) menu2Fcn();
-			//if(menuSel==MENU3) menu3Fcn();
-			//if(menuSel==MENU4) menu4Fcn();
+			if(menuSel==MENU3) menu3Fcn();
+			if(menuSel==MENU4) menu4Fcn();
 			if(flagMenuFinish){
 				flagMenuFinish=false;
 				mnIdle=false;
@@ -97,7 +102,69 @@ void dispatch(){
 	}
 }
 
+void menu1Fcn(){
+	tft.setCursor(0, 10);
+	tft.setTextColor(COLOR_GREEN);
+	tft.setTextSize(2);
+	tft.println("Seleccion 1");
+	
+	static unsigned long blink_millis = millis();
+	static bool blink = true;
+	if(blink){
+		if((millis() - blink_millis) >= length_MENU1){
+			blink_millis = millis();
+			blink = false;
+			tft.fillCircle(80,64,20,COLOR_BLACK);
+		}
+	} else {
+		if((millis() - blink_millis) >= length_MENU1){
+			blink_millis = millis();
+			blink = true;
+			tft.fillCircle(80,64,20,COLOR_GREEN);
+		}
+	}
+	
+	enterPress();
+	if(enterButtonPressed){
+		tft.fillScreen(COLOR_BLACK);
+		enterButtonPressed=false;
+		flagMenuFinish=true;
+		loopState=loopS0;
+	}	
+}
+
 void menu2Fcn(){
+	tft.setCursor(0, 10);
+	tft.setTextColor(COLOR_YELLOW);
+	tft.setTextSize(2);
+	tft.println("Seleccion 2");
+	
+	static unsigned long blink_millis = millis();
+	static bool blink = true;
+	if(blink){
+		if((millis() - blink_millis) >= length_MENU2){
+			blink_millis = millis();
+			blink = false;
+			tft.fillRect(40,42,80,40,COLOR_BLACK);
+		}
+	} else {
+		if((millis() - blink_millis) >= length_MENU2){
+			blink_millis = millis();
+			blink = true;
+			tft.fillRect(40,42,80,40,COLOR_YELLOW);
+		}
+	}
+	
+	enterPress();
+	if(enterButtonPressed){
+		tft.fillScreen(COLOR_BLACK);
+		enterButtonPressed=false;
+		flagMenuFinish=true;
+		loopState=loopS0;
+	}	
+}
+
+void menu3Fcn(){
 	tft.setCursor(0, 10);
 	tft.setTextColor(COLOR_YELLOW);
 	tft.setTextSize(2);
@@ -111,12 +178,11 @@ void menu2Fcn(){
 	}	
 }
 
-void menu1Fcn(){
+void menu4Fcn(){
 	tft.setCursor(0, 10);
-	tft.setTextColor(COLOR_GREEN);
+	tft.setTextColor(COLOR_YELLOW);
 	tft.setTextSize(2);
-	tft.println("Seleccion 1");
-	tft.fillCircle(80,64,20,COLOR_GREEN);	
+	tft.println("Seleccion 2");	
 	enterPress();
 	if(enterButtonPressed){
 		tft.fillScreen(COLOR_BLACK);
