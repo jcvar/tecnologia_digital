@@ -27,7 +27,7 @@ TFT tft = TFT(cs, dc, rst);
 
 const int length_MENU1 =  250;
 const int length_MENU2 =  500;
-const int length_MENU3 = 1000;
+const int length_MENU3 = 5000;
 const int length_MENU4 = 2000;
 
 int buttonEnterPin=6;
@@ -166,9 +166,26 @@ void menu2Fcn(){
 
 void menu3Fcn(){
 	tft.setCursor(0, 10);
-	tft.setTextColor(COLOR_YELLOW);
+	tft.setTextColor(COLOR_MAGENTA);
 	tft.setTextSize(2);
-	tft.println("Seleccion 2");	
+	tft.println("Seleccion 3");	
+	
+	static unsigned long blink_millis = millis();
+	static bool blink = true;
+	if(blink){
+		if((millis() - blink_millis) >= length_MENU3){
+			blink_millis = millis();
+			blink = false;
+			tft.fillTriangle(20,64,100, 32, 140, 86, COLOR_BLACK);
+		}
+	} else {
+		if((millis() - blink_millis) >= length_MENU3){
+			blink_millis = millis();
+			blink = true;
+			tft.fillTriangle(20,64,100, 32, 140, 86, COLOR_MAGENTA);
+		}
+	}
+	
 	enterPress();
 	if(enterButtonPressed){
 		tft.fillScreen(COLOR_BLACK);
@@ -182,7 +199,24 @@ void menu4Fcn(){
 	tft.setCursor(0, 10);
 	tft.setTextColor(COLOR_YELLOW);
 	tft.setTextSize(2);
-	tft.println("Seleccion 2");	
+	tft.println("Seleccion 2");
+	
+	static unsigned long blink_millis = millis();
+	static bool blink = true;
+	if(blink){
+		if((millis() - blink_millis) >= length_MENU2){
+			blink_millis = millis();
+			blink = false;
+			tft.fillRect(40,42,80,40,COLOR_BLACK);
+		}
+	} else {
+		if((millis() - blink_millis) >= length_MENU2){
+			blink_millis = millis();
+			blink = true;
+			tft.fillRect(40,42,80,40,COLOR_YELLOW);
+		}
+	}
+	
 	enterPress();
 	if(enterButtonPressed){
 		tft.fillScreen(COLOR_BLACK);
