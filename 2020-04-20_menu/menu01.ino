@@ -31,9 +31,11 @@ const int length_MENU3 = 1000;
 const int length_MENU4 = 2000;
 
 int buttonEnterPin=6;
+int buttonNextPin=7;
 
 enum buttonEnter_t {	lowValue,highValue};
 buttonEnter_t buttonEnter=lowValue;
+buttonEnter_t buttonNext=lowValue;
 
 enum state_t {	s0,s1,s2};
 state_t state=s0;
@@ -41,7 +43,7 @@ state_t state=s0;
 enum loop_t {	loopS0,loopS1,loopS2};
 loop_t loopState=loopS0;
 
-uint8_t menuSel=NONE;
+uint8_t menuSel=MENU1;
 bool enterButtonPressed=false;
 bool nextButtonPressed=false;
 bool mnIdle=false;
@@ -56,6 +58,7 @@ void setup(void) {
 void loop() {	
 	switch(loopState){
 		case loopS0:
+			nextPress();
 			menuSel = readButton();
 			mainMenu();
 			if(enterButtonPressed){
@@ -254,10 +257,10 @@ void mainMenu()
 	tft.setTextSize(2);
 	tft.println("--- MENU 4 -");
 	
-	tft.setCursor(45, 100);	
+	tft.setCursor(0, 100);	
 	tft.setTextColor(COLOR_WHITE);
 	tft.setTextSize(1);
-	tft.println("Press enter...");		
+	tft.println("Press enter to select\nPress next to navigate");	
 }
 
 void enterPress(){
@@ -276,14 +279,44 @@ void enterPress(){
 	}	
 }
 
-uint8_t readButton(void) {	
-	uint8_t a=map(analogRead(A0),0,1023,0,3);	
-	if(a==0) return MENU1;
-	if(a==1) return MENU2;
-	if(a==2) return MENU3;
-	if(a==3) return MENU4;
+
+uint8_t readButton(void) {
+	if(nextButtonPressed){
+		nextButtonPressed = false;
+		switch(menuSel){
+			case MENU1:
+				return MENU2;
+				break;
+			case MENU2:
+				return MENU3;
+				break;
+			case MENU3:
+				return MENU4;
+				break;
+			case MENU4:
+				return MENU1;
+				break;
+		}
+	}
+	else {
+		return menuSel;
+	}
 }
 
 
 
-
+void nextPress(){
+	switch(buttonNext) {
+		case lowValue:
+			if(digitalRead(buttonNextPin)==HIGH){
+				nextButtonPressed=true;
+				buttonNext=highValue;
+			}
+			break;
+		case highValue:
+			if(digitalRead(buttonNextPin)==LOW){
+				buttonNext=lowValue;
+			}
+			break;
+	}	
+}
