@@ -1,7 +1,7 @@
 # Tarea 4
 
 Selección| Color  | Figura    | Tiempo
-=========================================
+---------|--------|-----------|----------
 1        | Green  | círculo   | 500 ms
 2        | Yellow | rectángulo| 1s
 3        | Magenta| Triángulo | 2s
