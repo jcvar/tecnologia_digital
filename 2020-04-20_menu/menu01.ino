@@ -27,13 +27,15 @@ TFT tft = TFT(cs, dc, rst);
 
 const int length_MENU1 =  250;
 const int length_MENU2 =  500;
-const int length_MENU3 = 5000;
+const int length_MENU3 = 1000;
 const int length_MENU4 = 2000;
 
 int buttonEnterPin=6;
+int buttonNextPin=7;
 
 enum buttonEnter_t {	lowValue,highValue};
 buttonEnter_t buttonEnter=lowValue;
+buttonEnter_t buttonNext=lowValue;
 
 enum state_t {	s0,s1,s2};
 state_t state=s0;
@@ -41,8 +43,9 @@ state_t state=s0;
 enum loop_t {	loopS0,loopS1,loopS2};
 loop_t loopState=loopS0;
 
-uint8_t menuSel=NONE;
+uint8_t menuSel=MENU1;
 bool enterButtonPressed=false;
+bool nextButtonPressed=false;
 bool mnIdle=false;
 bool flagMenuFinish=false;
 
@@ -55,6 +58,7 @@ void setup(void) {
 void loop() {	
 	switch(loopState){
 		case loopS0:
+			nextPress();
 			menuSel = readButton();
 			mainMenu();
 			if(enterButtonPressed){
@@ -176,15 +180,16 @@ void menu3Fcn(){
 		if((millis() - blink_millis) >= length_MENU3){
 			blink_millis = millis();
 			blink = false;
-			tft.fillTriangle(20,64,100, 32, 140, 86, COLOR_BLACK);
+			tft.fillTriangle(60, 40, 40, 90, 100, 120, COLOR_BLACK);
 		}
 	} else {
 		if((millis() - blink_millis) >= length_MENU3){
 			blink_millis = millis();
 			blink = true;
-			tft.fillTriangle(20,64,100, 32, 140, 86, COLOR_MAGENTA);
+			tft.fillTriangle(60, 40, 40, 90, 100, 120, COLOR_MAGENTA);
 		}
 	}
+	
 	
 	enterPress();
 	if(enterButtonPressed){
@@ -197,23 +202,25 @@ void menu3Fcn(){
 
 void menu4Fcn(){
 	tft.setCursor(0, 10);
-	tft.setTextColor(COLOR_YELLOW);
+	tft.setTextColor(COLOR_BLUE);
 	tft.setTextSize(2);
-	tft.println("Seleccion 2");
+	tft.println("Seleccion 4");
 	
 	static unsigned long blink_millis = millis();
 	static bool blink = true;
 	if(blink){
-		if((millis() - blink_millis) >= length_MENU2){
+		if((millis() - blink_millis) >= length_MENU4){
 			blink_millis = millis();
 			blink = false;
-			tft.fillRect(40,42,80,40,COLOR_BLACK);
+			tft.fillRect(50,60,60,20,COLOR_BLACK);
+			tft.fillRect(70,40,20,60,COLOR_BLACK);
 		}
 	} else {
-		if((millis() - blink_millis) >= length_MENU2){
+		if((millis() - blink_millis) >= length_MENU4){
 			blink_millis = millis();
 			blink = true;
-			tft.fillRect(40,42,80,40,COLOR_YELLOW);
+			tft.fillRect(50,60,60,20,COLOR_BLUE);
+			tft.fillRect(70,40,20,60,COLOR_BLUE);
 		}
 	}
 	
@@ -250,10 +257,10 @@ void mainMenu()
 	tft.setTextSize(2);
 	tft.println("--- MENU 4 -");
 	
-	tft.setCursor(45, 100);	
+	tft.setCursor(0, 100);	
 	tft.setTextColor(COLOR_WHITE);
 	tft.setTextSize(1);
-	tft.println("Press enter...");		
+	tft.println("Press enter to select\nPress next to navigate");	
 }
 
 void enterPress(){
@@ -272,14 +279,44 @@ void enterPress(){
 	}	
 }
 
-uint8_t readButton(void) {	
-	uint8_t a=map(analogRead(A0),0,1023,0,3);	
-	if(a==0) return MENU1;
-	if(a==1) return MENU2;
-	if(a==2) return MENU3;
-	if(a==3) return MENU4;
+
+uint8_t readButton(void) {
+	if(nextButtonPressed){
+		nextButtonPressed = false;
+		switch(menuSel){
+			case MENU1:
+				return MENU2;
+				break;
+			case MENU2:
+				return MENU3;
+				break;
+			case MENU3:
+				return MENU4;
+				break;
+			case MENU4:
+				return MENU1;
+				break;
+		}
+	}
+	else {
+		return menuSel;
+	}
 }
 
 
 
-
+void nextPress(){
+	switch(buttonNext) {
+		case lowValue:
+			if(digitalRead(buttonNextPin)==HIGH){
+				nextButtonPressed=true;
+				buttonNext=highValue;
+			}
+			break;
+		case highValue:
+			if(digitalRead(buttonNextPin)==LOW){
+				buttonNext=lowValue;
+			}
+			break;
+	}	
+}
