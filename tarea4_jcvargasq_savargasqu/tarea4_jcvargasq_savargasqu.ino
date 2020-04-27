@@ -93,10 +93,10 @@ void dispatch(){
 			tft.fillScreen(COLOR_BLACK);
 			state=s2;
 		case s2:
-			if(menuSel==MENU1) menu_selection(1, COLOR_GREEN,   length_MENU1) //menu1Fcn();
-			if(menuSel==MENU2) menu_selection(2, COLOR_YELLOW,  length_MENU2) //menu2Fcn();
-			if(menuSel==MENU3) menu_selection(3, COLOR_MAGENTA, length_MENU3) //menu3Fcn();
-			if(menuSel==MENU4) menu_selection(4, COLOR_BLUE,    length_MENU4) //menu4Fcn();
+			if(menuSel==MENU1) menu_selection(MENU1, COLOR_GREEN,   length_MENU1); //menu1Fcn();
+			if(menuSel==MENU2) menu_selection(MENU2, COLOR_YELLOW,  length_MENU2); //menu2Fcn();
+			if(menuSel==MENU3) menu_selection(MENU3, COLOR_MAGENTA, length_MENU3); //menu3Fcn();
+			if(menuSel==MENU4) menu_selection(MENU4, COLOR_BLUE,    length_MENU4); //menu4Fcn();
 			if(flagMenuFinish) {
 				flagMenuFinish=false;
 				mnIdle=false;
@@ -140,16 +140,16 @@ void menu_selection(uint8_t selection, uint8_t color, int duration) {
 
 void draw_selection(uint8_t selection, uint8_t color) {
 	switch selection:
-	  case 1:
+	  case MENU1:
 		tft.fillCircle(80, 64, 20, color);
 		break;
-	  case 2:
+	  case MENU2:
 		tft.fillRect(40, 42, 80, 40, color);
 		break;
-	  case 3:
+	  case MENU3:
 		tft.fillTriangle(60, 40, 40, 90, 100, 120, color);
 		break;
-	  case 4:
+	  case MENU4:
 		tft.fillRect(50, 60, 60, 20, color);
 		tft.fillRect(70, 40, 20, 60, color);
 		break;
