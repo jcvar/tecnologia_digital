@@ -1,5 +1,6 @@
 # Tecnología Digital
 
+Grupo de trabajo #4\
 Juan Camilo Vargas Q.\
 Sergio Alejandro Vargas Q.
 
