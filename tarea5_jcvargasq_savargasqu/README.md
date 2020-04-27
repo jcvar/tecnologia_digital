@@ -5,7 +5,7 @@ Grupo 4\
 Juan Camilo Vargas `jcvargasq@unal.edu.co` \
 Sergio Alejandro Vargas `savargasqu@unal.edu.co`
 
-## Tarea 5 – Menú con botones
+## Tarea 5 – Menú con comunicación serial
 
 Modificar el ejemplo de menú presentado en clase para ser operado con dos botones,
 en lugar de un botón y sensor análogo.
