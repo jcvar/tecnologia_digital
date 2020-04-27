@@ -85,8 +85,8 @@ void draw_walk(walk_state_t light) {
 	
 	if(light == sDont){
 		TFTscreen.stroke(O);
-		TFTscreen.text("WALK", 87, 67);
 		TFTscreen.text("DONT", 87, 47);
+		TFTscreen.text("WALK", 87, 67);
 	}
 	if(light == sWalk_on){
 		TFTscreen.stroke(K);

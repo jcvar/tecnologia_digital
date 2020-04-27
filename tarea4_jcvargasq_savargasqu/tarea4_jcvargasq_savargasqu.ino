@@ -52,7 +52,8 @@ bool flagMenuFinish=false;
 void setup(void) {
 	tft.begin();	
 	tft.fillScreen(COLOR_BLACK);
-	pinMode(buttonEnterPin,INPUT_PULLUP);	
+	pinMode(buttonEnterPin,INPUT_PULLUP);
+	pinMode(buttonNextPin,INPUT_PULLUP);	
 }
 
 void loop() {	

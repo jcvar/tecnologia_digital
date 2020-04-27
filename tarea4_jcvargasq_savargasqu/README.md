@@ -1,6 +1,7 @@
-### Universidad Nacional De Colombia
-### Tecnología Digital 2020-I
+Universidad Nacional De Colombia \
+Tecnología Digital 2020-I
 
+Grupo 4\
 Juan Camilo Vargas `jcvargasq@unal.edu.co` \
 Sergio Alejandro Vargas `savargasqu@unal.edu.co`
 
@@ -17,4 +18,3 @@ Selección| Color  | Figura    | Periodo
 2        | Yellow | Rectángulo| 1s
 3        | Magenta| Triángulo | 2s
 4        | Blue   | Cruz      | 4s
-
