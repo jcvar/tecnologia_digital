@@ -18,4 +18,3 @@ Selección| Color  | Figura    | Periodo
 2        | Yellow | Rectángulo| 1s
 3        | Magenta| Triángulo | 2s
 4        | Blue   | Cruz      | 4s
-

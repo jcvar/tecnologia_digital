@@ -5,6 +5,7 @@
 #define cs   10
 #define dc   9
 #define rst  8
+TFT tft = TFT(cs, dc, rst);
 
 // Some ready-made 16-bit ('565') color settings:
 #define COLOR_BLACK 0x0000
@@ -17,8 +18,6 @@
 #define COLOR_YELLOW 0xFFE0
 #define COLOR_ORANGE 0xFC00
 
-TFT tft = TFT(cs, dc, rst);
-
 #define MENU1 0
 #define MENU2 1
 #define MENU3 2
@@ -29,6 +28,17 @@ const int length_MENU1 =  250;
 const int length_MENU2 =  500;
 const int length_MENU3 = 1000;
 const int length_MENU4 = 2000;
+
+uint8_t color_menu1 = COLOR_BLACK;
+uint8_t color_menu2 = COLOR_BLACK;
+uint8_t color_menu3 = COLOR_BLACK;
+uint8_t color_menu4 = COLOR_BLACK;
+
+char char_menu1 = '\0';
+char char_menu2 = '\0';
+char char_menu3 = '\0';
+char char_menu4 = '\0';
+
 
 int buttonEnterPin=6;
 int buttonNextPin=7;
@@ -50,9 +60,11 @@ bool mnIdle=false;
 bool flagMenuFinish=false;
 
 void setup(void) {
+	Serial.begin(9600);
 	tft.begin();	
 	tft.fillScreen(COLOR_BLACK);
-	pinMode(buttonEnterPin,INPUT_PULLUP);	
+	pinMode(buttonEnterPin,INPUT_PULLUP);
+	pinMode(buttonNextPin,INPUT_PULLUP);	
 }
 
 void loop() {	
@@ -106,9 +118,27 @@ void dispatch(){
 	}
 }
 
-void menu1Fcn(){
+void menu1Fcn(){	
+	// Write label
+	tft.setCursor(0, 120);
+	tft.setTextSize(1);
+	tft.setTextColor(COLOR_WHITE);
+	tft.println("Selected color is:");
+	// Erase written color
+	tft.setCursor(120, 120);
+	tft.setTextColor(COLOR_BLACK);
+	tft.print(char_menu1);
+	// Update color
+	char_menu1 = readColor(1);
+	color_menu1 = colorPicker(char_menu1);
+	// Write updated color 
+	tft.setCursor(120, 120);
+	tft.setTextColor(color_menu1);
+	tft.print(char_menu1);
+	
+	// Write title
 	tft.setCursor(0, 10);
-	tft.setTextColor(COLOR_GREEN);
+	tft.setTextColor(color_menu1);
 	tft.setTextSize(2);
 	tft.println("Seleccion 1");
 	
@@ -124,7 +154,7 @@ void menu1Fcn(){
 		if((millis() - blink_millis) >= length_MENU1){
 			blink_millis = millis();
 			blink = true;
-			tft.fillCircle(80,64,20,COLOR_GREEN);
+			tft.fillCircle(80,64,20,color_menu1);
 		}
 	}
 	
@@ -138,8 +168,10 @@ void menu1Fcn(){
 }
 
 void menu2Fcn(){
+	static uint8_t sel_color = COLOR_BLACK;
+	
 	tft.setCursor(0, 10);
-	tft.setTextColor(COLOR_YELLOW);
+	tft.setTextColor(sel_color);
 	tft.setTextSize(2);
 	tft.println("Seleccion 2");
 	
@@ -155,7 +187,7 @@ void menu2Fcn(){
 		if((millis() - blink_millis) >= length_MENU2){
 			blink_millis = millis();
 			blink = true;
-			tft.fillRect(40,42,80,40,COLOR_YELLOW);
+			tft.fillRect(40,42,80,40,sel_color);
 		}
 	}
 	
@@ -169,8 +201,9 @@ void menu2Fcn(){
 }
 
 void menu3Fcn(){
+	static uint8_t sel_color = COLOR_BLACK;
 	tft.setCursor(0, 10);
-	tft.setTextColor(COLOR_MAGENTA);
+	tft.setTextColor(sel_color);
 	tft.setTextSize(2);
 	tft.println("Seleccion 3");	
 	
@@ -186,7 +219,7 @@ void menu3Fcn(){
 		if((millis() - blink_millis) >= length_MENU3){
 			blink_millis = millis();
 			blink = true;
-			tft.fillTriangle(60, 40, 40, 90, 100, 120, COLOR_MAGENTA);
+			tft.fillTriangle(60, 40, 40, 90, 100, 120, sel_color);
 		}
 	}
 	
@@ -201,8 +234,9 @@ void menu3Fcn(){
 }
 
 void menu4Fcn(){
+	static uint8_t sel_color = COLOR_BLACK;
 	tft.setCursor(0, 10);
-	tft.setTextColor(COLOR_BLUE);
+	tft.setTextColor(sel_color);
 	tft.setTextSize(2);
 	tft.println("Seleccion 4");
 	
@@ -219,8 +253,8 @@ void menu4Fcn(){
 		if((millis() - blink_millis) >= length_MENU4){
 			blink_millis = millis();
 			blink = true;
-			tft.fillRect(50,60,60,20,COLOR_BLUE);
-			tft.fillRect(70,40,20,60,COLOR_BLUE);
+			tft.fillRect(50,60,60,20,sel_color);
+			tft.fillRect(70,40,20,60,sel_color);
 		}
 	}
 	
@@ -319,4 +353,38 @@ void nextPress(){
 			}
 			break;
 	}	
+}
+
+char readColor(int i){
+	static char c[] = {'\0', '\0', '\0', '\0'};
+	if(Serial.available() > 0){
+		c[i-1] = Serial.read();	
+	}
+	return c[i-1];
+}
+
+
+
+uint8_t colorPicker(char c){
+	switch(c){
+		case 'R':
+			return COLOR_RED;
+			break;
+		case 'G':
+			return COLOR_GREEN;
+			break;
+		case 'B':
+			return COLOR_BLUE;
+			break;
+		case 'C':
+			return COLOR_CYAN;
+			break;
+		case 'M':
+			return COLOR_MAGENTA;
+			break;
+		case 'Y':
+			return COLOR_YELLOW;
+			break;
+	}
+	return COLOR_BLACK;
 }
