@@ -10,16 +10,16 @@
 TFT tft = TFT(cs, dc, rst);
 
 // Some ready-made 16-bit ('565') color settings:
-#define COLOR_BLACK   0x0000
-#define COLOR_WHITE   0xFFFF
-#define COLOR_RED     0xF800
-#define COLOR_GREEN   0x07E0
-#define COLOR_BLUE    0x001F
-#define COLOR_YELLOW  0xFFE0
-#define COLOR_MAGENTA 0xF81F
-#define COLOR_CYAN    0x07FF
-#define COLOR_ORANGE  0xFC00
-uint8_t colorSel = COLOR_BLACK;
+const word COLOR_BLACK   = 0x0000;
+const word COLOR_WHITE   = 0xFFFF;
+const word COLOR_RED     = 0xF800;
+const word COLOR_GREEN   = 0x07E0;
+const word COLOR_BLUE    = 0x001F;
+const word COLOR_YELLOW  = 0xFFE0;
+const word COLOR_MAGENTA = 0xF81F;
+const word COLOR_CYAN    = 0x07FF;
+const word COLOR_ORANGE  = 0xFC00;
+word colorSel = COLOR_BLACK;
 
 // Menu selector definitions
 #define NONE  0
@@ -27,7 +27,7 @@ uint8_t colorSel = COLOR_BLACK;
 #define MENU2 2
 #define MENU3 3
 #define MENU4 4
-uint8_t menuSel = MENU1;
+int menuSel = MENU1;
 
 // State machine definitions
 enum state_t {	s0, s1, s2};
@@ -125,7 +125,7 @@ void dispatch(){
 }
 
 // Draw and refresh all screen elements
-void menu_selection(uint8_t selection, int duration) {
+void menu_selection(int selection, int duration) {
 	static char charColor = '\0';
 	// Write label
 	tft.setCursor(0, 120);
@@ -148,7 +148,7 @@ void menu_selection(uint8_t selection, int duration) {
 	tft.setTextColor(colorSel);
 	tft.setTextSize(2);
 	tft.print("Seleccion");// sprintf("Seleccion %d", selection));
-	tft.setCursor(0, 120);
+	tft.setCursor(120, 10);
 	tft.print(selection);
 	
 	// Check for blink state
@@ -171,7 +171,7 @@ void menu_selection(uint8_t selection, int duration) {
 }
 
 // Draw figure of selected screen
-void draw_selection(uint8_t selection, uint8_t color) {
+void draw_selection(int selection, word color) {
 	switch (selection){
 		case MENU1:
 			tft.fillCircle(80, 64, 20, color);
@@ -195,27 +195,27 @@ void mainMenu() {
 	if(menuSel==MENU1)tft.setTextColor(COLOR_RED);
 	else tft.setTextColor(COLOR_WHITE);
 	tft.setTextSize(2);
-	tft.println("-- MENU 1 --");
+	tft.println(" - MENU 1 -");
 	
 	if(menuSel==MENU2)tft.setTextColor(COLOR_RED);
 	else tft.setTextColor(COLOR_WHITE);
 	tft.setTextSize(2);
-	tft.println("-- MENU 2 --");
+	tft.println(" - MENU 2 -");
 	
 	if(menuSel==MENU3)tft.setTextColor(COLOR_RED);
 	else tft.setTextColor(COLOR_WHITE);
 	tft.setTextSize(2);
-	tft.println("-- MENU 3 --");
+	tft.println(" - MENU 3 -");
 	
 	if(menuSel==MENU4)tft.setTextColor(COLOR_RED);
 	else tft.setTextColor(COLOR_WHITE);
 	tft.setTextSize(2);
-	tft.println("-- MENU 4 --");
+	tft.println(" - MENU 4 -");
 	
 	tft.setCursor(0, 100);
 	tft.setTextColor(COLOR_WHITE);
 	tft.setTextSize(1);
-	tft.println("Press enter to select\nPress next to navigate");
+	tft.println("Press ENTER to select\nPress NEXT to navigate");
 }
 
 void buttonPress(button_t *buttonState, bool *buttonFlag, int buttonPin){
@@ -267,7 +267,7 @@ void nextPress(){
 	}
 }
 
-uint8_t readButton() {
+int readButton() {
 	if(nextButtonPressed) {
 		nextButtonPressed = false;
 		switch(menuSel){
@@ -296,7 +296,7 @@ char readColor(){
 
 
 
-uint8_t colorPicker(char c){
+word colorPicker(char c){
 	switch(c){
 		case 'R':
 			return COLOR_RED;
@@ -310,6 +310,10 @@ uint8_t colorPicker(char c){
 			return COLOR_MAGENTA;
 		case 'Y':
 			return COLOR_YELLOW;
+		case 'W':
+			return COLOR_WHITE;
+		case 'O':
+			return COLOR_ORANGE;
 	}
 	return COLOR_BLACK;
 }
