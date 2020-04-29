@@ -124,13 +124,16 @@ void menu1Fcn(){
 	tft.setTextSize(1);
 	tft.setTextColor(COLOR_WHITE);
 	tft.println("Selected color is:");
+	
 	// Erase written color
 	tft.setCursor(120, 120);
 	tft.setTextColor(COLOR_BLACK);
 	tft.print(char_menu1);
+	
 	// Update color
 	char_menu1 = readColor(1);
 	color_menu1 = colorPicker(char_menu1);
+	
 	// Write updated color 
 	tft.setCursor(120, 120);
 	tft.setTextColor(color_menu1);
