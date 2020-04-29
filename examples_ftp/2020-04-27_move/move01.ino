@@ -1,5 +1,5 @@
 /*
-	moving square in a court 
+	moving square in a court
 */
 
 #include <TFT.h>  // Arduino LCD library
@@ -39,18 +39,18 @@ void setup() {
 	TFTscreen.begin();
 	// black background
 	TFTscreen.background(0, 0, 0);
-	
+
 	// draw court
 	TFTscreen.drawRect(courtX, courtY, courtW,courtH,0xF800);
-	
+
 	// court limits
 	courtTopLine=courtY;
 	courtBottomLine=courtY+courtH;
 	courtLeftLine=courtX;
 	courtRightLine=courtX+courtW;
-	
+
 	delay(2000);
-	
+
 }
 
 void loop() {
@@ -61,41 +61,41 @@ void loop() {
 
 int count=0;
 void moveBall(){
-	//static int count=0;	
+	//static int count=0;
 	switch(state){
 		case s0:
 			ballX += ballDirectionX;
-			//ballY += ballDirectionY;		
+			//ballY += ballDirectionY;
 			if(ballX > (courtRightLine-ballW)/3 - 2){
 				state=s1;
 			} else if (ballX < (courtLeftLine)){
 				ballDirectionX *= -1;
 				ballDirectionY *= -1;
 			}
-			break;			
+			break;
 		case s1:
 			ballY += ballDirectionY;
 			if(ballY > (courtBottomLine-ballH)-2){
 				state=s2;
 			} else  if(ballY < (courtTopLine)+2){
 				state=s0;
-			}	
-			break;			
+			}
+			break;
 		case s2:
 			ballX += ballDirectionX;
 			if(ballX >  2*(courtRightLine-ballW)/3 - 2){
 				state=s3;
 			} else if (ballX < (courtRightLine-ballW)/3 - 2){
 				state=s1;
-			}	
-			break;	
+			}
+			break;
 		case s3:
 			ballY -= ballDirectionY;
 			if(ballY < (courtTopLine)+2){
 				state=s4;
 			}else if(ballY > (courtBottomLine-ballH)-2){
 				state=s2;
-			}	
+			}
 			break;
 		case s4:
 			ballX += ballDirectionX;
@@ -105,25 +105,21 @@ void moveBall(){
 			}else if (ballX <  2*(courtRightLine-ballW)/3 - 2){
 				state=s3;
 			}
-			break;					
+			break;
 	}
-	
+
 	// erase the ball's previous position
 	TFTscreen.fill(0, 0, 0);
-	
+
 	if (oldBallX != ballX || oldBallY != ballY) {
 		TFTscreen.rect(oldBallX, oldBallY, ballW, ballH);
 	}
-	
+
 	// draw the ball's current position
 	TFTscreen.fill(255, 255, 0);
 	TFTscreen.rect(ballX, ballY, ballW, ballH);
-	
+
 	oldBallX = ballX;
 	oldBallY = ballY;
-	
+
 }
-
-
-
-
