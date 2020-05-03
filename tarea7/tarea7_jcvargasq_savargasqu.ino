@@ -53,7 +53,7 @@ struct court_t {
 };
 court_t court; // court instance
 
-enum state_t {s0, s1, s2, s3, s4}; // ball states
+enum state_t {	s0, s1, s2, s3, s4}; // ball states
 state_t ballA_state = s0;
 state_t ballB_state = s0;
 
@@ -106,9 +106,9 @@ void loop() {
 	}
 }
 
-void drawBall(ball_t ball) {
-	TFTscreen.fillRect(ball.oldX, ball.oldY, ball.width, ball.height, COLOR_BLACK);
-	TFTscreen.fillRect(ball.posX, ball.posY, ball.width, ball.height, ball.color);
+void drawBall(ball_t *ball) {
+	TFTscreen.fillRect(ball->oldX, ball->oldY, ball->width, ball->height, COLOR_BLACK);
+	TFTscreen.fillRect(ball->posX, ball->posY, ball->width, ball->height, ball->color);
 }
 
 void moveBallA() {
@@ -120,7 +120,7 @@ void moveBallA() {
 			ballA.posX += ballA.speedX;
 			if(ballA.posX > (court.right - ballA.width)/3 - 2){
 				ballA_state = s1;
-			} else if (ballA.posX < (court.left)) {
+			} else if (ballA.posX < (court.left) + 2) {
 				ballA.speedX *= -1;
 				ballA.speedY *= -1;
 			}
@@ -164,7 +164,7 @@ void moveBallA() {
 			break;
 	}
 	if (ballA.oldX != ballA.posX || ballA.oldY != ballA.posY) {
-		drawBall(ballA);
+		drawBall(&ballA);
 	}
 }
 
@@ -198,6 +198,6 @@ void moveBallB(){
 			break;
 	}
 	if (ballB.oldX != ballB.posX || ballB.oldY != ballB.posY) {
-		drawBall(ballA);
+		drawBall(&ballB);
 	}
 }
