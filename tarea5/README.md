@@ -20,4 +20,3 @@ Selección | Figura    | Periodo
 4         | Cruz      | 4s
 
 Extender la Tarea 4, para permitir al usuario la selección del color en cada pantalla por medio de comunicación serial.
-

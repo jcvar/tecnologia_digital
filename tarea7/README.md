@@ -10,3 +10,4 @@ Sergio Alejandro Vargas `savargasqu@unal.edu.co`
 Animar simultáneamente el punto A (10ms) y el punto B (25ms) de la tarea 6.
 Los colores no importan.
 
+<img src="tarea6_rutas.png" alt="Rutas Tarea 6" style="width: 50%">
