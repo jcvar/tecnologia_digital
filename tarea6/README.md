@@ -7,4 +7,5 @@ Sergio Alejandro Vargas `savargasqu@unal.edu.co`
 
 ## Tarea 6 – Animaciones en pantalla TFT
 
-Realizar las tres animaciones propuestas en clase.
+Realizar las tres animaciones propuestas en clase, extendiendo el modelo de bola y cancha presentado.
+ 
