@@ -33,10 +33,10 @@ struct ball_t {
 	word color;
 	int width;
 	int height;
-	int posX;
-	int posY;
-	int oldX;
-	int oldY;
+	float posX;
+	float posY;
+	float oldX;
+	float oldY;
 	int speedX;
 	int speedY;
 	unsigned long prevMillis;
@@ -110,7 +110,7 @@ void moveBall() {
 		case s1: // The ball moves diagonally to the middle of the top
 			ballA.color = COLOR_YELLOW;
 			ballA.posX -= 1;
-			ballA.posY -= 54/75;
+			ballA.posY -= 54.0/75.0;
 			if(ballA.posY < (court.top + ballA.height)) {
 				ballA_state = s2;
 			}
@@ -127,15 +127,15 @@ void moveBall() {
 		case s3: // The ball moves diagonally to the bottom right corner
 			ballA.color = COLOR_CYAN;
 			ballA.posX += 1;
-			ballA.posY += 54/72;
-			if(ballA.posY > (court.bottom + ballA.height)) {
-				ballA_state = s2;
+			ballA.posY += 54.0/75.0;
+			if(ballA.posY > (court.bottom - ballA.height) - 2) {
+				ballA_state = s4;
 			}
 			break;
 		case s4: // The ball moves horizontally across to the bottom left corner
 			ballA.color = COLOR_MAGENTA;
 			ballA.posX -= ballA.speedX;
-			if(ballA.posX < (court.left + ballA.width)) {
+			if(ballA.posX < (court.left + ball.width) - 2) {
 				ballA_state = s5;
 			}
 			break;
