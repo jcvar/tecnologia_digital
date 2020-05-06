@@ -19,7 +19,7 @@ TFT TFTscreen = TFT(cs, dc, rst);
 
 // Ball parameters
 #define BALL_SIZE 2
-#define BALL_INITX 5
+#define BALL_INITX 130
 #define BALL_INITY 64
 #define BALL_MILLIS 50
 
@@ -29,32 +29,27 @@ TFT TFTscreen = TFT(cs, dc, rst);
 #define COURT_W 150
 #define COURT_H 108
 
-// OTHER PARAMETERS
-#define SINE_AMP 40
-#define SINE_FRE (4.0*PI)/(150.0)
-
-
-// new stuff
+// Trayectory parameters
 #define BALL_INIT_T 0
-#define T_STEP 0.3
+#define T_STEP 0.01
 
+//Ellipse parametes
 #define MAYOR_AXIS 50
 #define MINOR_AXIS 30
-
 
 // Ball structure
 struct ball_t {
 	word color;
 	int rad;
-	int posX;
-	int posY;
-	int oldX;
-	int oldY;
+	float posX;
+	float posY;
+	float oldX;
+	float oldY;
 	int speedX;
 	int speedY;
 	unsigned long prevMillis;
-        int oldT;
-        float t;
+	float oldT;
+	float t;
 };
 
 ball_t ball; // ball instance
@@ -80,16 +75,16 @@ void setup() {
 	court.right = COURT_X + COURT_W;
 	
 	// Ball initialization
-	ball.color = COLOR_GREEN;
+	ball.color = COLOR_CYAN;
 	ball.rad = BALL_SIZE;
 	ball.posX = BALL_INITX;
 	ball.posY = BALL_INITY;
 	ball.speedX = 1;
 	ball.speedY  = 1;
 	ball.prevMillis = 0;
-        ball.t = BALL_INIT_T;
+	ball.t = BALL_INIT_T;
 	
-	drawPlot(COLOR_GREEN);
+	drawPlot();
 	TFTscreen.fillCircle(ball.posX, ball.posY, ball.rad, ball.color);
 	drawCourt();
 	delay(500);
@@ -98,15 +93,13 @@ void setup() {
 void loop() {
 	if(millis() > ball.prevMillis + BALL_MILLIS){
 		ball.prevMillis = millis();
-		drawPlot(COLOR_GREEN);
-		//moveBall();
+		drawPlot();
+		moveBall();
 		drawCourt();
 	}
 }
 
 void drawCourt(){
-	TFTscreen.fillRect(0, 50, 5, 28, COLOR_BLACK);
-	TFTscreen.fillRect(155, 50, 5, 28, COLOR_BLACK);
 	TFTscreen.drawRect(COURT_X, COURT_Y, COURT_W, COURT_H, COLOR_RED);
 }
 
@@ -115,36 +108,34 @@ void drawBall(ball_t *ball) {
 	TFTscreen.fillCircle(ball->posX, ball->posY, ball->rad, ball->color);
 }
 
-float calc_x(int t){
-        return MAYOR_AXIS * cos(t);
+float calc_x(float t){
+	return (MAYOR_AXIS * cos(t)) + 80;
 }
 
-float calc_y(int t){
-	//return 64 - SINE_AMP * sin(SINE_FRE * (x-5));
-        return MINOR_AXIS * sin(t);
+float calc_y(float t){
+	return (MINOR_AXIS * sin(t)) + 64;
 }
- 
 
-void drawPlot(word c){
-	//TFTscreen.drawFastHLine(COURT_X, 64, COURT_W, c);
-	for(float i = 0; i < 2*PI; i+=0.3){
-		TFTscreen.drawPixel(calc_x(i), calc_y(i), c);
+void drawPlot(){
+	TFTscreen.drawFastHLine(COURT_X, 64, COURT_W, COLOR_WHITE);
+	TFTscreen.drawFastVLine(80, COURT_Y, COURT_H, COLOR_WHITE);
+	for(float i = 0; i < TWO_PI; i+=T_STEP){
+		TFTscreen.drawPixel(calc_x(i), calc_y(i), COLOR_BLUE);
 	}
 }
 
 void moveBall() {
 	ball.oldX = ball.posX;
 	ball.oldY = ball.posY;
-
-        ball.t += T_STEP;
+	
+	ball.t += T_STEP*10;
 	ball.posX = calc_x(ball.t);
 	ball.posY = calc_y(ball.t);
-	if(ball.t > 2*PI){ // Technically not necessary, but T stays small
+	if(ball.t > TWO_PI){	// Technically not necessary, but T stays small
 		ball.t = BALL_INIT_T;
 	}
-
+	
 	if (ball.oldX != ball.posX || ball.oldY != ball.posY) {
 		drawBall(&ball);
 	}
 }
-
