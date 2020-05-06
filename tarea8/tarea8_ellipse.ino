@@ -33,6 +33,15 @@ TFT TFTscreen = TFT(cs, dc, rst);
 #define SINE_AMP 40
 #define SINE_FRE (4.0*PI)/(150.0)
 
+
+// new stuff
+#define BALL_INIT_T 0
+#define T_STEP 0.3
+
+#define MAYOR_AXIS 50
+#define MINOR_AXIS 30
+
+
 // Ball structure
 struct ball_t {
 	word color;
@@ -44,7 +53,10 @@ struct ball_t {
 	int speedX;
 	int speedY;
 	unsigned long prevMillis;
+        int oldT;
+        float t;
 };
+
 ball_t ball; // ball instance
 
 // Court structure
@@ -54,12 +66,8 @@ struct court_t {
 	int left;
 	int right;
 };
-court_t court;// court instance
 
-/*
-enum state_t {	s0, s1, s2, s3, s4}; // ball states
-state_t ball_state = s0;
-*/
+court_t court;// court instance
 
 void setup() {
 	TFTscreen.begin(); // initialize the display
@@ -79,6 +87,7 @@ void setup() {
 	ball.speedX = 1;
 	ball.speedY  = 1;
 	ball.prevMillis = 0;
+        ball.t = BALL_INIT_T;
 	
 	drawPlot(COLOR_GREEN);
 	TFTscreen.fillCircle(ball.posX, ball.posY, ball.rad, ball.color);
@@ -90,19 +99,8 @@ void loop() {
 	if(millis() > ball.prevMillis + BALL_MILLIS){
 		ball.prevMillis = millis();
 		drawPlot(COLOR_GREEN);
-		moveBall();
+		//moveBall();
 		drawCourt();
-	}
-}
-
-float x_to_y(int x){
-	return 64 - SINE_AMP * sin(SINE_FRE * (x-5));
-}
-
-void drawPlot(word c){
-	TFTscreen.drawFastHLine(COURT_X, 64, COURT_W, c);
-	for(int i = court.left; i < court.right; i++){
-		TFTscreen.drawPixel(i, x_to_y(i), c);
 	}
 }
 
@@ -117,16 +115,34 @@ void drawBall(ball_t *ball) {
 	TFTscreen.fillCircle(ball->posX, ball->posY, ball->rad, ball->color);
 }
 
+float calc_x(int t){
+        return MAYOR_AXIS * cos(t);
+}
+
+float calc_y(int t){
+	//return 64 - SINE_AMP * sin(SINE_FRE * (x-5));
+        return MINOR_AXIS * sin(t);
+}
+ 
+
+void drawPlot(word c){
+	//TFTscreen.drawFastHLine(COURT_X, 64, COURT_W, c);
+	for(float i = 0; i < 2*PI; i+=0.3){
+		TFTscreen.drawPixel(calc_x(i), calc_y(i), c);
+	}
+}
+
 void moveBall() {
 	ball.oldX = ball.posX;
 	ball.oldY = ball.posY;
-	
-	ball.posX += ball.speedX;
-	if(ball.posX > (court.right)){
-		ball.posX = BALL_INITX;
+
+        ball.t += T_STEP;
+	ball.posX = calc_x(ball.t);
+	ball.posY = calc_y(ball.t);
+	if(ball.t > 2*PI){ // Technically not necessary, but T stays small
+		ball.t = BALL_INIT_T;
 	}
-	ball.posY = x_to_y(ball.posX);
-	
+
 	if (ball.oldX != ball.posX || ball.oldY != ball.posY) {
 		drawBall(&ball);
 	}
