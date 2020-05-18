@@ -36,7 +36,7 @@ int cx[8]={10,30,50,70,90,110,130,150};
 int cy[6]={14,34,54,74,94,114};
 
 
-enum state_t {s0,s1,s2,s3};
+enum state_t {	s0,s1,s2,s3};
 state_t state=s0;
 
 void setup() {
@@ -59,50 +59,74 @@ void setup() {
 
 int x = 0;
 int y = 0;
+
 void loop() {
+	static unsigned long prevMillis = 0;
+	
+	if (millis() >= prevMillis + 100) {
+		prevMillis = millis();
+		fsm();
+	}
+}
+
+
+void fsm() {
 	switch(state){
-		case s0: // TOP
+		case s0: // GO RIGHT
 			// Erase prev
-			if(x==0) tft.fillCircle(cx[x],cy[y+1],10,COLOR_BLUE);
-			else tft.fillCircle(cx[x-1],cy[y],10,COLOR_BLUE);
+			if(x==0)
+				tft.fillCircle(cx[x],cy[y+1],10,COLOR_BLUE);
+			else	
+				tft.fillCircle(cx[x-1],cy[y],10,COLOR_BLUE);
 			// Draw next
 			tft.fillCircle(cx[x+1],cy[y],10,COLOR_YELLOW);
 			
 			x++;
-			if(x==7) state = s1;
+			if(x==7)
+				state = s1;
 			break;
 			
-		case s1: // RIGHT
+		case s1: // GO DOWN
 			// Erase prev
-			if(y==0) tft.fillCircle(cx[x-1],cy[y],10,COLOR_BLUE);
-			else tft.fillCircle(cx[x],cy[y-1],10,COLOR_BLUE);
+			if(y==0)
+				tft.fillCircle(cx[x-1],cy[y],10,COLOR_BLUE);
+			else
+				tft.fillCircle(cx[x],cy[y-1],10,COLOR_BLUE);
 			// Draw next
 			tft.fillCircle(cx[x],cy[y+1],10,COLOR_YELLOW);
 			
 			y++;
-			if(y==5) state = s2;
+			if(y==5)
+				state = s2;
 			break;
 			
-		case s2: // BOTTOM
+		case s2: // GO LEFT
 			// Erase prev
-			if(cx==0) tft.fillCircle(cx[0],cy[1],10,COLOR_BLUE);
-			else tft.fillCircle(cx[i-1],cy[0],10,COLOR_BLUE);
+			if(x==7)
+				tft.fillCircle(cx[7],cy[y-1],10,COLOR_BLUE);
+			else
+				tft.fillCircle(cx[x+1],cy[y],10,COLOR_BLUE);
 			// Draw next
-			tft.fillCircle(cx[i+1],cy[0],10,COLOR_YELLOW);
+			tft.fillCircle(cx[x-1],cy[y],10,COLOR_YELLOW);
 			
-			cx++;
-			if(cx==8) state = s1;
+			x--;
+			if(x==0)
+				state = s3;
+			
 			break;
 			
-		case s0: // LEFT
+		case s3: // GO UP
 			// Erase prev
-			if(cx==0) tft.fillCircle(cx[0],cy[1],10,COLOR_BLUE);
-			else tft.fillCircle(cx[i-1],cy[0],10,COLOR_BLUE);
+			if(y==5)
+				tft.fillCircle(cx[x+1],cy[y],10,COLOR_BLUE);
+			else
+				tft.fillCircle(cx[x],cy[y+1],10,COLOR_BLUE);
 			// Draw next
-			tft.fillCircle(cx[i+1],cy[0],10,COLOR_YELLOW);
+			tft.fillCircle(cx[x],cy[y-1],10,COLOR_YELLOW);
 			
-			cx++;
-			if(cx==8) state = s1;
+			y--;
+			if(y==0)
+				state = s0;
 			break;
+	}
 }
-
