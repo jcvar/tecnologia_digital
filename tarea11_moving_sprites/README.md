@@ -5,7 +5,7 @@ Grupo 4\
 Juan Camilo Vargas `jcvargasq@unal.edu.co` \
 Sergio Alejandro Vargas `savargasqu@unal.edu.co`
 
-## Tarea 11 – Animacióne de un bitmap
+## Tarea 11 – Animación de un bitmap
 
 Tomar el ejemplo mostrado en clase, y complementar el movimiento de la imagen para recorrer el perímetro interior de la figura indicada en la imagen a continuación:
 
