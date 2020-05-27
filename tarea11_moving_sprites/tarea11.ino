@@ -156,12 +156,12 @@ void setup() {
 void loop() {
 	if(millis() - sprite.prevMillis > MILLIS) {
 		sprite.prevMillis = millis();
-		sprite_path();
+		move_sprite();
 	}
 }
 
 
-void sprite_path() {
+void move_sprite() {
 	static state_t state = a0;
 	switch (state) {
 		a0: // RIGHT MOVEMENT TOP
@@ -205,12 +205,12 @@ void sprite_path() {
 		break;
 		
 		a5: // HALT
-		continue;
+		break;
 }
 
-	if(sprite.posX != sprite.oldX || sprite.posY != sprite.oldY){
-		draw_image();
-	}
+if(sprite.posX != sprite.oldX || sprite.posY != sprite.oldY){
+	draw_image();
+}
 }
 
 void draw_image() {
