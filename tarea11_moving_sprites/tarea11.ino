@@ -150,7 +150,8 @@ void setup() {
 	
 	// Draw court
 	TFTscreen.drawRect(COURT_X, COURT_Y, COURT_W, COURT_H, COLOR_RED);
-	
+	draw_image();
+	delay(MILLIS);
 }
 
 
