@@ -70,7 +70,7 @@ struct sprite_t sprite = {
 	21, // oldY  
 	5,  // offset 
 	0   // prevMillis
-};
+	};
 
 typedef enum state_t {	a0, a1, a2, a3, a4, a5};
 
@@ -150,6 +150,7 @@ void setup() {
 	
 	// Draw court
 	TFTscreen.drawRect(COURT_X, COURT_Y, COURT_W, COURT_H, COLOR_RED);
+	
 }
 
 
@@ -162,80 +163,82 @@ void loop() {
 
 
 void move_sprite() {
-	static state_t state = a0;
-	switch (state) {
-		a0: // RIGHT MOVEMENT TOP
-		if(sprite.posX + sprite.w + sprite.offset >= FAR_RIGHT){
-			state = a1;
-		} else {
-			sprite.posX += sprite.offset;
-		}
-		break;
-		
-		a1: // LEFT MOVEMENT TOP
-		if(sprite.posX - sprite.offset <= MID_LEFT){
-			state = a2;
-		} else {
-			sprite.posX -= sprite.offset;
-		}
-		break;
-		
-		a2: // DOWN MOVEMENT
-		if(sprite.posY + sprite.h + sprite.offset >= FAR_BOTTOM){
-			state = a3;
-		} else {
-			sprite.posY += sprite.offset;
-		}
-		break;
-		
-		a3: // LEFT MOVEMENT BOTTOM
-		if(sprite.posX - sprite.offset <= FAR_LEFT){
-			state = a4;
-		} else {
-			sprite.posX -= sprite.offset;
-		}
-		break;
-		
-		a4: // RIGHT MOVEMENT BOTTOM
-		if(sprite.posX + sprite.w + sprite.offset >= FAR_RIGHT){
-			state = a5;
-		} else {
-			sprite.posX += sprite.offset;
-		}
-		break;
-		
-		a5: // HALT
-		break;
-}
-
-if(sprite.posX != sprite.oldX || sprite.posY != sprite.oldY){
-	draw_image();
-}
-}
-
-void draw_image() {
-for (int row = 0; row < sprite.h; row++) {
-	for (int col = 0; col < sprite.w; col++) {
-		word p = pgm_read_word(myImage + (row*sprite.w + col));
-		TFTscreen.drawPixel(col + sprite.posX, row + sprite.posY, p);
+	static state_t ani_state = a0;
+	
+	switch(ani_state) {
+		case a0: // RIGHT MOVEMENT TOP
+			if(sprite.posX + sprite.w + sprite.offset >= FAR_RIGHT){
+				ani_state = a1;
+			} else {
+				sprite.posX += sprite.offset;
+			}
+			break;
+			
+		case a1: // LEFT MOVEMENT TOP
+			if(sprite.posX - sprite.offset <= MID_LEFT){
+				ani_state = a2;
+			} else {
+				sprite.posX -= sprite.offset;
+			}
+			break;
+			
+		case a2: // DOWN MOVEMENT
+			if(sprite.posY + sprite.h + sprite.offset >= FAR_BOTTOM){
+				ani_state = a3;
+			} else {
+				sprite.posY += sprite.offset;
+			}
+			break;
+			
+		case a3: // LEFT MOVEMENT BOTTOM
+			if(sprite.posX - sprite.offset <= FAR_LEFT){
+				ani_state = a4;
+			} else {
+				sprite.posX -= sprite.offset;
+			}
+			break;
+			
+		case a4: // RIGHT MOVEMENT BOTTOM
+			if(sprite.posX + sprite.w + sprite.offset >= FAR_RIGHT){
+				ani_state = a5;
+			} else {
+				sprite.posX += sprite.offset;
+			}
+			break;
+			
+		case a5: // HALT
+			break;
+	}
+	
+	sprite.posX += sprite.offset;
+	if(sprite.posX != sprite.oldX || sprite.posY != sprite.oldY){
+		draw_image();
 	}
 }
 
-// Draw rect to black out shadow (x axis)
-if(sprite.posX > sprite.oldX){
-	TFTscreen.fillRect(sprite.oldX, sprite.posY, sprite.offset, sprite.h, COLOR_BLACK);
-} else if(sprite.posX < sprite.oldX){
-	TFTscreen.fillRect(sprite.posX + sprite.w, sprite.posY, sprite.offset, sprite.h, COLOR_BLACK);
-}
-// Draw rect to black out shadow (y axis)
-if(sprite.posY > sprite.oldY){
-	TFTscreen.fillRect(sprite.posX, sprite.oldY, sprite.w, sprite.offset, COLOR_BLACK);
-} else if(sprite.posY < sprite.oldY){
-	TFTscreen.fillRect(sprite.posX, sprite.posY + sprite.h, sprite.w, sprite.offset, COLOR_BLACK);
-}
-sprite.oldX = sprite.posX;	
-sprite.oldY = sprite.posY;	
-
-TFTscreen.drawRect(sprite.posX, sprite.posY, sprite.w, sprite.h, COLOR_MAGENTA);
+void draw_image() {
+	for (int row = 0; row < sprite.h; row++) {
+		for (int col = 0; col < sprite.w; col++) {
+			word p = pgm_read_word(myImage + (row*sprite.w + col));
+			TFTscreen.drawPixel(col + sprite.posX, row + sprite.posY, p);
+		}
+	}
+	
+	// Draw rect to black out shadow (x axis)
+	if(sprite.posX > sprite.oldX){
+		TFTscreen.fillRect(sprite.oldX, sprite.posY, sprite.offset, sprite.h, COLOR_BLACK);
+	} else if(sprite.posX < sprite.oldX){
+		TFTscreen.fillRect(sprite.posX + sprite.w, sprite.posY, sprite.offset, sprite.h, COLOR_BLACK);
+	}
+	// Draw rect to black out shadow (y axis)
+	if(sprite.posY > sprite.oldY){
+		TFTscreen.fillRect(sprite.posX, sprite.oldY, sprite.w, sprite.offset, COLOR_BLACK);
+	} else if(sprite.posY < sprite.oldY){
+		TFTscreen.fillRect(sprite.posX, sprite.posY + sprite.h, sprite.w, sprite.offset, COLOR_BLACK);
+	}
+	sprite.oldX = sprite.posX;	
+	sprite.oldY = sprite.posY;	
+	
+	TFTscreen.drawRect(sprite.posX, sprite.posY, sprite.w, sprite.h, COLOR_MAGENTA);
 }
 
