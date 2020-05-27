@@ -1,7 +1,3 @@
-/*
-	animation bar+image
-*/
-
 #include <TFT.h>  // Arduino LCD library
 #include <SPI.h>
 
@@ -35,6 +31,18 @@ TFT TFTscreen = TFT(cs, dc, rst);
 #define COURT_Y 10
 #define COURT_W 150
 #define COURT_H 108
+
+//Green walls
+#define FAR_LEFT 20
+#define MIDDLE_LEFT 62
+#define MIDDLE_RIGHT 98
+#define FAR_RIGHT 140
+#define FAR_TOP 20
+#define MIDDLE_TOP 51
+#define MIDDLE_BOTTOM 76
+#define FAR_BOTTOM 108
+
+#define MILLIS 200
 
 
 const PROGMEM word  myImage[0x30C] ={
@@ -89,81 +97,87 @@ const PROGMEM word  myImage[0x30C] ={
 0x1060, 0x20C1, 0x20A1, 0x1060, 0x0840, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, };
 
 
-// Court structure
-struct court_t {
-	int top;
-	int bottom;
-	int left;
-	int right;
-};
-
-// Court instance initialization
-const court_t court = {
-	COURT_Y,
-	COURT_Y + COURT_H,
-	COURT_X,
-	COURT_X + COURT_W
-}
-
-struct sprite {
+struct sprite_t {
+	int width;
+	int height;
 	int posX;
 	int posY;
 	int oldX;
 	int oldY;
+	int speed;
+	unsigned long prevMillis;
 };
 
+struct sprite_t sprite = {
+	30,
+	26,
+	21,
+	21,
+	21,
+	21,
+	5,
+	0
+};
 
-unsigned long previousMillisBar=0, currentMillis=0;
+typedef enum ani_state_t {	a0, a1, a2, a3, a4};
+
 
 void setup() {
-	// initialize the display
 	TFTscreen.begin();
-	// black background
-	TFTscreen.background(0, 0, 0);	
-	// draw court
-	TFTscreen.drawRect(courtX, courtY, courtW,courtH,0xF800);
+	TFTscreen.background(0, 0, 0);
+	
+	// Draw court
+	TFTscreen.drawRect(COURT_X, COURT_Y, COURT_W, COURT_H, COLOR_RED);
+	// Outer vertical lines
+	TFTscreen.drawFastVLine(FAR_LEFT, COURT_Y, COURT_H, COLOR_GREEN);
+	TFTscreen.drawFastVLine(FAR_RIGHT, COURT_Y, COURT_H, COLOR_GREEN);
+	// Outer horizontal lines
+	TFTscreen.drawFastHLine(FAR_LEFT, FAR_TOP, FAR_RIGHT - FAR_LEFT, COLOR_GREEN);
+	TFTscreen.drawFastHLine(FAR_LEFT, FAR_BOTTOM, FAR_RIGHT - FAR_LEFT, COLOR_GREEN);
+	// Inner vertical lines
+	TFTscreen.drawFastVLine(MIDDLE_LEFT, MIDDLE_TOP, MIDDLE_BOTTOM - MIDDLE_TOP, COLOR_GREEN);
+	TFTscreen.drawFastVLine(MIDDLE_RIGHT, MIDDLE_TOP, MIDDLE_BOTTOM - MIDDLE_TOP, COLOR_GREEN);
+	// Inner top lines 
+	TFTscreen.drawFastHLine(FAR_LEFT, MIDDLE_TOP, MIDDLE_LEFT - FAR_LEFT, COLOR_GREEN);
+	TFTscreen.drawFastHLine(MIDDLE_RIGHT, MIDDLE_TOP, FAR_RIGHT - MIDDLE_RIGHT, COLOR_GREEN);
+	// Inner bottom lines 
+	TFTscreen.drawFastHLine(FAR_LEFT, MIDDLE_BOTTOM, MIDDLE_LEFT - FAR_LEFT, COLOR_GREEN);
+	TFTscreen.drawFastHLine(MIDDLE_RIGHT, MIDDLE_BOTTOM, FAR_RIGHT - MIDDLE_RIGHT, COLOR_GREEN);
 }
+
 
 void loop() {
-	TFTscreen.drawFastVLine(20, 12, 104,COLOR_GREEN);
-	TFTscreen.drawFastVLine(140, 12, 104,COLOR_GREEN);	
-	bar();
+	if(millis() - sprite.prevMillis > MILLIS) {
+		sprite.prevMillis = millis();
+		sprite_path();
+	}
 }
 
 
-void bar(){
-	// old code. THIS DOESN'T COMPILE
-	static int imagePosX=20,imagePosY=33,imageOldPosX=20;
-	const int imageWidth=30,imageHeight=26;
-	currentMillis=millis();	
-	if(currentMillis-previousMillisBar>500){
-		previousMillisBar=currentMillis;
-		switch(barstate){
-			case bar0:
-				//image reading:
-				int w = imageWidth, h = imageHeight, row, col, buffidx=0;  //w:width , h:height
-				for (row=0; row<h; row++) {
-					for (col=0; col<w; col++) {
-						word p=pgm_read_word(myImage + buffidx);
-						TFTscreen.drawPixel(col+imagePosX,row+imagePosY,p);
-						buffidx++;
-					}
-				}			
-				if(imagePosX != imageOldPosX){	//erase left part of the image
-					TFTscreen.fillRect(imageOldPosX, imagePosY, incWbar, 26, COLOR_BLACK);
-				}
-				imageOldPosX=imagePosX;	
-				TFTscreen.fillRect(20, 59, wbar, 10, COLOR_GREEN);
-				if(wbar<=115){
-					wbar+=incWbar;	
-					imagePosX+=incWbar;
-				}else{
-					
-				}
-				break;				
-			case bar1:
-				
-				break;	
-		}										
+void draw_image() {
+	for (int row = 0; row < sprite.height; row++) {
+		for (int col = 0; col < sprite.width; col++) {
+			word p = pgm_read_word(myImage + (row*sprite.width + col));
+			TFTscreen.drawPixel(col + sprite.posX, row + sprite.posY, p);
+		}
+	}			
+	if(sprite.posX > sprite.oldX){
+		TFTscreen.fillRect(sprite.oldX, sprite.posY, sprite.speed, sprite.height, COLOR_BLACK);
+	} else if(sprite.posX < sprite.oldX){
+		TFTscreen.fillRect(sprite.posX + sprite.width, sprite.posY, sprite.speed, sprite.height, COLOR_BLACK);
 	}
+	
+	if(sprite.posY > sprite.oldY){
+		TFTscreen.fillRect(sprite.posX, sprite.oldY, sprite.width, sprite.speed, COLOR_BLACK);
+	} else if(sprite.posY < sprite.oldY){
+		TFTscreen.fillRect(sprite.posX, sprite.posY + sprite.height, sprite.width, sprite.speed, COLOR_BLACK);
+	}
+	sprite.oldX = sprite.posX;	
+	sprite.oldY = sprite.posY;	
+}
+
+void sprite_path() {
+	sprite.posX += sprite.speed;	
+	//sprite.posY += sprite.speed;
+	draw_image();
 }
