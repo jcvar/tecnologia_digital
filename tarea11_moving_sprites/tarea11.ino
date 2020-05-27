@@ -1,17 +1,22 @@
+/*
+Tarea 11
+Animación de un bitmap
+
+Juan Camilo Vargas Q.			jcvargasq@unal.edu.co
+Sergio Alejandro Vargas Q.		savargasqu@unal.edu.co
+
+Tecnologia Digital
+Universidad Nacional de Colombia
+2020-05-27
+*/
 #include <TFT.h>  // Arduino LCD library
 #include <SPI.h>
-
 #include <pgmspace.h>
 
 // pin definition for the Uno
 #define cs   10
 #define dc   9
 #define rst  8
-
-// pin definition for the Leonardo
-// #define cs   7
-// #define dc   0
-// #define rst  1
 
 TFT TFTscreen = TFT(cs, dc, rst);
 
@@ -31,8 +36,7 @@ TFT TFTscreen = TFT(cs, dc, rst);
 #define COURT_Y 10
 #define COURT_W 150
 #define COURT_H 108
-
-//Green walls
+// Green walls
 #define FAR_LEFT 20
 #define MIDDLE_LEFT 62
 #define MIDDLE_RIGHT 98
@@ -42,9 +46,36 @@ TFT TFTscreen = TFT(cs, dc, rst);
 #define MIDDLE_BOTTOM 76
 #define FAR_BOTTOM 108
 
+// Sketch parameters
 #define MILLIS 200
 
+struct sprite_t {
+	int width;
+	int height;
+	int posX;
+	int posY;
+	int oldX;
+	int oldY;
+	int speed;
+	unsigned long prevMillis;
+};
 
+struct sprite_t sprite = {
+	30,
+	26,
+	21,
+	21,
+	21,
+	21,
+	5,
+	0
+};
+
+typedef enum state_t {a0, a1, a2, a3, a4, a5};
+state_t state = a0;
+
+
+// Bitmap
 const PROGMEM word  myImage[0x30C] ={
 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,   // 0x0010 (16)
 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,   // 0x0020 (32)
@@ -97,31 +128,6 @@ const PROGMEM word  myImage[0x30C] ={
 0x1060, 0x20C1, 0x20A1, 0x1060, 0x0840, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, };
 
 
-struct sprite_t {
-	int width;
-	int height;
-	int posX;
-	int posY;
-	int oldX;
-	int oldY;
-	int speed;
-	unsigned long prevMillis;
-};
-
-struct sprite_t sprite = {
-	30,
-	26,
-	21,
-	21,
-	21,
-	21,
-	5,
-	0
-};
-
-typedef enum ani_state_t {	a0, a1, a2, a3, a4};
-
-
 void setup() {
 	TFTscreen.begin();
 	TFTscreen.background(0, 0, 0);
@@ -156,30 +162,80 @@ void loop() {
 
 
 void draw_image() {
+	// Draw image pixels
 	for (int row = 0; row < sprite.height; row++) {
 		for (int col = 0; col < sprite.width; col++) {
 			word p = pgm_read_word(myImage + (row*sprite.width + col));
 			TFTscreen.drawPixel(col + sprite.posX, row + sprite.posY, p);
 		}
-	}			
+	}
+
+	// Draw rect to black out shadow (x axis)
 	if(sprite.posX > sprite.oldX){
 		TFTscreen.fillRect(sprite.oldX, sprite.posY, sprite.speed, sprite.height, COLOR_BLACK);
 	} else if(sprite.posX < sprite.oldX){
 		TFTscreen.fillRect(sprite.posX + sprite.width, sprite.posY, sprite.speed, sprite.height, COLOR_BLACK);
 	}
-	
+	// Draw rect to black out shadow (y axis)
 	if(sprite.posY > sprite.oldY){
 		TFTscreen.fillRect(sprite.posX, sprite.oldY, sprite.width, sprite.speed, COLOR_BLACK);
 	} else if(sprite.posY < sprite.oldY){
 		TFTscreen.fillRect(sprite.posX, sprite.posY + sprite.height, sprite.width, sprite.speed, COLOR_BLACK);
 	}
-	TFTscreen.drawRect(sprite.posX, sprite.posY, sprite.width, sprite.height, COLOR_MAGENTA);
 	sprite.oldX = sprite.posX;	
 	sprite.oldY = sprite.posY;	
+
+	TFTscreen.drawRect(sprite.posX, sprite.posY, sprite.width, sprite.height, COLOR_MAGENTA);
 }
 
 void sprite_path() {
-	sprite.posX += sprite.speed;	
-	//sprite.posY += sprite.speed;
-	draw_image();
+	switch(state){
+		a0: // RIGHT MOVEMENT TOP
+			if(sprite.posX + sprite.width + sprite.speed >= FAR_RIGHT){
+				state = a1;
+			} else {
+				sprite.posX += sprite.speed;
+			}
+		break;
+
+		a1: // LEFT MOVEMENT TOP
+			if(sprite.posX - sprite.speed <= MIDDLE_LEFT){
+				state = a2;
+			} else {
+				sprite.posX -= sprite.speed;
+			}
+		break;
+
+		a2: // DOWN MOVEMENT
+			if(sprite.posY + sprite.height + sprite.speed >= FAR_BOTTOM){
+				state = a3;
+			} else {
+				sprite.posY += sprite.speed;
+			}
+		break;
+
+		a3: // LEFT MOVEMENT BOTTOM
+			if(sprite.posX - sprite.speed <= FAR_LEFT){
+				state = a4;
+			} else {
+				sprite.posX -= sprite.speed;
+			}
+		break;
+
+		a4: // RIGHT MOVEMENT BOTTOM
+			if(sprite.posX + sprite.width + sprite.speed >= FAR_RIGHT){
+				state = a5;
+			} else {
+				sprite.posX += sprite.speed;
+			}
+		break;
+
+		a5:
+			// EMPTY STATE
+		break;
+
+	}
+	if(sprite.posX != sprite.oldX || sprite.posY != sprite.oldY){
+		draw_image();
+	}
 }
