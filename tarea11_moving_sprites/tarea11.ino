@@ -47,7 +47,7 @@ TFT TFTscreen = TFT(cs, dc, rst);
 #define FAR_BOTTOM 108
 
 // Sketch parameters
-#define MILLIS 200
+#define MILLIS 500
 
 struct sprite_t {
 	int width;
@@ -71,8 +71,7 @@ struct sprite_t sprite = {
 	0
 };
 
-typedef enum state_t {a0, a1, a2, a3, a4, a5};
-state_t state = a0;
+typedef enum state_t {	a0, a1, a2, a3, a4, a5};
 
 
 // Bitmap
@@ -147,7 +146,7 @@ void setup() {
 	// Inner bottom lines 
 	TFTscreen.drawFastHLine(FAR_LEFT, MIDDLE_BOTTOM, MIDDLE_LEFT - FAR_LEFT, COLOR_GREEN);
 	TFTscreen.drawFastHLine(MIDDLE_RIGHT, MIDDLE_BOTTOM, FAR_RIGHT - MIDDLE_RIGHT, COLOR_GREEN);
-
+	
 	// Draw court
 	TFTscreen.drawRect(COURT_X, COURT_Y, COURT_W, COURT_H, COLOR_RED);
 }
@@ -169,7 +168,7 @@ void draw_image() {
 			TFTscreen.drawPixel(col + sprite.posX, row + sprite.posY, p);
 		}
 	}
-
+	
 	// Draw rect to black out shadow (x axis)
 	if(sprite.posX > sprite.oldX){
 		TFTscreen.fillRect(sprite.oldX, sprite.posY, sprite.speed, sprite.height, COLOR_BLACK);
@@ -184,58 +183,59 @@ void draw_image() {
 	}
 	sprite.oldX = sprite.posX;	
 	sprite.oldY = sprite.posY;	
-
+	
 	TFTscreen.drawRect(sprite.posX, sprite.posY, sprite.width, sprite.height, COLOR_MAGENTA);
 }
 
 void sprite_path() {
+	static state_t state = a0;
 	switch(state){
 		a0: // RIGHT MOVEMENT TOP
-			if(sprite.posX + sprite.width + sprite.speed >= FAR_RIGHT){
-				state = a1;
-			} else {
-				sprite.posX += sprite.speed;
-			}
+		if(sprite.posX + sprite.width + sprite.speed >= FAR_RIGHT){
+			state = a1;
+		} else {
+			sprite.posX += sprite.speed;
+		}
 		break;
-
+		
 		a1: // LEFT MOVEMENT TOP
-			if(sprite.posX - sprite.speed <= MIDDLE_LEFT){
-				state = a2;
-			} else {
-				sprite.posX -= sprite.speed;
-			}
+		if(sprite.posX - sprite.speed <= MIDDLE_LEFT){
+			state = a2;
+		} else {
+			sprite.posX -= sprite.speed;
+		}
 		break;
-
+		
 		a2: // DOWN MOVEMENT
-			if(sprite.posY + sprite.height + sprite.speed >= FAR_BOTTOM){
-				state = a3;
-			} else {
-				sprite.posY += sprite.speed;
-			}
+		if(sprite.posY + sprite.height + sprite.speed >= FAR_BOTTOM){
+			state = a3;
+		} else {
+			sprite.posY += sprite.speed;
+		}
 		break;
-
+		
 		a3: // LEFT MOVEMENT BOTTOM
-			if(sprite.posX - sprite.speed <= FAR_LEFT){
-				state = a4;
-			} else {
-				sprite.posX -= sprite.speed;
-			}
+		if(sprite.posX - sprite.speed <= FAR_LEFT){
+			state = a4;
+		} else {
+			sprite.posX -= sprite.speed;
+		}
 		break;
-
+		
 		a4: // RIGHT MOVEMENT BOTTOM
-			if(sprite.posX + sprite.width + sprite.speed >= FAR_RIGHT){
-				state = a5;
-			} else {
-				sprite.posX += sprite.speed;
-			}
+		if(sprite.posX + sprite.width + sprite.speed >= FAR_RIGHT){
+			state = a5;
+		} else {
+			sprite.posX += sprite.speed;
+		}
 		break;
-
+		
 		a5:
-			// EMPTY STATE
+		// EMPTY STATE
 		break;
-
-	}
-	if(sprite.posX != sprite.oldX || sprite.posY != sprite.oldY){
-		draw_image();
-	}
+		
+}
+if(sprite.posX != sprite.oldX || sprite.posY != sprite.oldY){
+	draw_image();
+}
 }
