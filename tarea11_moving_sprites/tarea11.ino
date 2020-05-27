@@ -126,8 +126,6 @@ void setup() {
 	TFTscreen.begin();
 	TFTscreen.background(0, 0, 0);
 	
-	// Draw court
-	TFTscreen.drawRect(COURT_X, COURT_Y, COURT_W, COURT_H, COLOR_RED);
 	// Outer vertical lines
 	TFTscreen.drawFastVLine(FAR_LEFT, COURT_Y, COURT_H, COLOR_GREEN);
 	TFTscreen.drawFastVLine(FAR_RIGHT, COURT_Y, COURT_H, COLOR_GREEN);
@@ -143,6 +141,9 @@ void setup() {
 	// Inner bottom lines 
 	TFTscreen.drawFastHLine(FAR_LEFT, MIDDLE_BOTTOM, MIDDLE_LEFT - FAR_LEFT, COLOR_GREEN);
 	TFTscreen.drawFastHLine(MIDDLE_RIGHT, MIDDLE_BOTTOM, FAR_RIGHT - MIDDLE_RIGHT, COLOR_GREEN);
+
+	// Draw court
+	TFTscreen.drawRect(COURT_X, COURT_Y, COURT_W, COURT_H, COLOR_RED);
 }
 
 
@@ -172,6 +173,7 @@ void draw_image() {
 	} else if(sprite.posY < sprite.oldY){
 		TFTscreen.fillRect(sprite.posX, sprite.posY + sprite.height, sprite.width, sprite.speed, COLOR_BLACK);
 	}
+	TFTscreen.drawRect(sprite.posX, sprite.posY, sprite.width, sprite.height, COLOR_MAGENTA);
 	sprite.oldX = sprite.posX;	
 	sprite.oldY = sprite.posY;	
 }
