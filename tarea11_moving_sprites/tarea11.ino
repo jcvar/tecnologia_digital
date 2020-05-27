@@ -48,7 +48,7 @@ TFT TFTscreen = TFT(cs, dc, rst);
 #define FAR_BOTTOM 108
 
 // Sketch parameters
-#define MILLIS 500
+#define MILLIS 400
 
 struct sprite_t {
 	int w; // width
@@ -167,7 +167,7 @@ void move_sprite() {
 	
 	switch(ani_state) {
 		case a0: // RIGHT MOVEMENT TOP
-			if(sprite.posX + sprite.w + sprite.offset >= FAR_RIGHT){
+			if(sprite.posX + sprite.w + sprite.offset > FAR_RIGHT){
 				ani_state = a1;
 			} else {
 				sprite.posX += sprite.offset;
@@ -199,7 +199,7 @@ void move_sprite() {
 			break;
 			
 		case a4: // RIGHT MOVEMENT BOTTOM
-			if(sprite.posX + sprite.w + sprite.offset >= FAR_RIGHT){
+			if(sprite.posX + sprite.w + sprite.offset > FAR_RIGHT){
 				ani_state = a5;
 			} else {
 				sprite.posX += sprite.offset;
@@ -210,7 +210,6 @@ void move_sprite() {
 			break;
 	}
 	
-	sprite.posX += sprite.offset;
 	if(sprite.posX != sprite.oldX || sprite.posY != sprite.oldY){
 		draw_image();
 	}
@@ -239,6 +238,6 @@ void draw_image() {
 	sprite.oldX = sprite.posX;	
 	sprite.oldY = sprite.posY;	
 	
-	TFTscreen.drawRect(sprite.posX, sprite.posY, sprite.w, sprite.h, COLOR_MAGENTA);
+	//TFTscreen.drawRect(sprite.posX, sprite.posY, sprite.w, sprite.h, COLOR_MAGENTA); // For debugging
 }
 
