@@ -97,7 +97,7 @@ void bar(){
 		TFTscreen.fillRect(LEFT_LINE, 59, bar_val, 10, COLOR_GREEN);
 		TFTscreen.fillRect(LEFT_LINE + bar_val + 1, 59, RIGHT_LINE - LEFT_LINE - bar_val - 1, 10, COLOR_BLACK);
 	}
-	/*
+/*
 	if(button_pressed_up){
 		button_pressed_up = false;
 		if (bar_val + STEP <= RIGHT_LINE-LEFT_LINE){
@@ -111,17 +111,15 @@ void bar(){
 	}
 	TFTscreen.fillRect(LEFT_LINE, 59, bar_val, 10, COLOR_GREEN);
 	TFTscreen.fillRect(LEFT_LINE + bar_val + 1, 59, RIGHT_LINE - LEFT_LINE - bar_val - 1, 10, COLOR_BLACK);
-	*/
+	*/	
 }
-
-
 
 
 void upPressed(){
 	if (digitalRead(BUTTON_PIN_UP) == HIGH && bar_val + STEP <= RIGHT_LINE-LEFT_LINE) {
 		bar_val += STEP;
 	}
-	/*
+/*
 	static bool button_state = false;
 	if(!button_state && digitalRead(BUTTON_PIN_UP) == HIGH){
 		button_pressed_up = true;
@@ -129,14 +127,15 @@ void upPressed(){
 	} else if (button_state && digitalRead(BUTTON_PIN_UP) == LOW){
 		button_state = false;
 	}
-	*/
+	*/	
 }
+
 
 void downPressed(){
 	if (digitalRead(BUTTON_PIN_DOWN) == HIGH && (bar_val - STEP >= 0)) {
 		bar_val -= STEP;
 	}
-	/*
+/*
 	static bool button_state = false;
 	if(!button_state && digitalRead(BUTTON_PIN_DOWN) == HIGH){
 		button_pressed_down = true;
@@ -144,5 +143,5 @@ void downPressed(){
 	} else if (button_state && digitalRead(BUTTON_PIN_DOWN) == LOW){
 		button_state = false;
 	}
-	*/
+	*/	
 }
