@@ -26,9 +26,23 @@ Universidad Nacional de Colombia
 //courtLeftLine=courtY;
 //courtRightLine=courtX+courtW;
 
+#define BLOCK_SIZE 10
+
 Mario myMario;
 
-//========================= SETUP ==========================
+typedef struct {
+	int posX;
+	int posY;
+	int w;
+	int h;
+	word color;
+} block;
+
+
+block block_g;
+block block_r;
+
+
 void setup() {
 	TFTscreen.begin();
 	TFTscreen.background(0, 0, 0);
@@ -40,14 +54,51 @@ void setup() {
 	myMario.isJumping=false;
 	myMario.state=t0;
 	myMario.walkingDelay=150;
+
+	block_g = {
+		COURT_X + COURT_W - BLOCK_SIZE - 1,
+		COURT_Y + COURT_H - BLOCK_SIZE - 1,
+		BLOCK_SIZE,
+		BLOCK_SIZE,
+		COLOR_GREEN,
+	};
+
+	block_r = {
+		COURT_X + COURT_W - BLOCK_SIZE - 1,
+		COURT_Y + COURT_H - BLOCK_SIZE - 1,
+		BLOCK_SIZE,
+		BLOCK_SIZE,
+		COLOR_RED,
+	};
 	
 	// Draw court and ground
 	TFTscreen.drawRect(COURT_X, COURT_Y, COURT_W, COURT_H, COLOR_RED);
 	//TFTscreen.drawFastHLine()
 }
-//========================= LOOP ==========================
+
+
 void loop() {
 	myMario.walking();
 	myMario.jumping(2000,4);		
+	move_blocks();
 }
-//=========================================================
+
+
+void move_blocks() {
+
+	typedef enum block_state {s0, s1, s2};
+	static block_state bs = s0;
+	switch(bs) {
+		case s0:
+			if (block_g.posX > 
+		break;
+		case s0:
+		break;
+		case s0:
+		break;
+		case s0:
+		break;
+	}
+	
+
+}

@@ -26,6 +26,8 @@ class Mario {
 	int posX;
 	int posY;
 	int jumpPosY;
+	const int w = 16; // Width
+	const int h = 28; // Height
 	unsigned int walkingDelay;
 	bool isJumping;
 	
@@ -38,10 +40,10 @@ class Mario {
 		{
 			previousMillis=currentMillis; 
 			//image reading:
-			int w = 16, h = 28, row, col, buffidx=0;  //w:width , h:height
-			for (row=0; row<h; row++) 
+			int buffidx=0;
+			for (int row=0; row<h; row++) 
 			{
-				for (col=0; col<w; col++) 
+				for (int col=0; col<w; col++) 
 				{
 					//word p;
 					switch(index)
@@ -93,12 +95,11 @@ class Mario {
 					if (digitalRead(jumpButtonPin)==HIGH)
 					{
 						isJumping=true;
-						
 						//walking image erase:
-						int w = 16, h = 28, row, col, buffidx=0;  //w:width , h:height
-						for (row=0; row<h; row++) 
+						int buffidx=0;
+						for (int row=0; row<h; row++) 
 						{
-							for (col=0; col<w; col++) 
+							for (int col=0; col<w; col++) 
 							{
 								TFTscreen.drawPixel(col+posX,row+posY,COLOR_BLACK);
 								buffidx++;
@@ -106,10 +107,10 @@ class Mario {
 						}
 						
 						//jump image reading:
-						w = 16; h = 28;buffidx=0;  //w:width , h:height
-						for (row=0; row<h; row++) 
+						buffidx=0;
+						for (int row=0; row<h; row++) 
 						{
-							for (col=0; col<w; col++) 
+							for (int col=0; col<w; col++) 
 							{
 								word p=pgm_read_word(m1 + buffidx);
 								TFTscreen.drawPixel(col+posX,row+jumpPosY,p);
@@ -126,16 +127,16 @@ class Mario {
 					if((currentMillis-previousMillisA) > jumpTime)
 					{
 						//jump image erase:
-						int w = 16, h = 28, row, col, buffidx=0;  //w:width , h:height
-						for (row=0; row<h; row++) 
+						int buffidx=0;
+						for (int row=0; row<h; row++) 
 						{
-							for (col=0; col<w; col++) 
+							for (int col=0; col<w; col++) 
 							{
 								TFTscreen.drawPixel(col+posX,row+jumpPosY,COLOR_BLACK);
 								buffidx++;
 							}
 						}     
-						isJumping=false;      
+						isJumping=false;
 						state=t0;
 					}
 					break;
