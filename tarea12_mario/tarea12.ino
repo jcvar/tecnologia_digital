@@ -9,28 +9,20 @@ Tecnologia Digital
 Universidad Nacional de Colombia
 2020-06-01
 */
-// img size: 96x80
 #include <SPI.h>
 #include "mario_img.h"
 #include "mario.h"
 
-// court parameters
+// Court parameters
 #define COURT_X 5
 #define COURT_Y 10
 #define COURT_W 150
 #define COURT_H 108
-// court limits
-//int courtTopLine=0,courtBottomLine=0,courtLeftLine=0,courtRightLine=0;
-//courtTopLine=courtY;
-//courtBottomLine=courtY+courtH;
-//courtLeftLine=courtY;
-//courtRightLine=courtX+courtW;
 
+// Block parameters
 #define BLOCK_SIZE 10
 #define BLOCK_MILLIS 100
 #define BLOCK_SPEED 2
-
-Mario myMario;
 
 typedef struct {
 	int posX;
@@ -41,7 +33,6 @@ typedef struct {
 	int h;
 	word color;
 } block;
-
 
 block block_g = {
 		COURT_X + COURT_W - BLOCK_SIZE - 1,
@@ -63,9 +54,18 @@ block block_r = {
 		COLOR_RED
 	};
 
+Mario myMario;
+bool game_over = false;
+int score = 0;
+const int strSize = 4;
+char score_str[strSize] = {0, 0, 0};
+typedef enum {	s0, s1, s2}  block_state;
+
 // Function declatarions
 void check_collision(block);
 void draw_block(block);
+void endgame();
+void draw_score();
 
 void setup() {
 	TFTscreen.begin();
@@ -82,25 +82,29 @@ void setup() {
 	// Draw court and ground
 	TFTscreen.drawRect(COURT_X, COURT_Y, COURT_W, COURT_H, COLOR_RED);
 	//TFTscreen.drawFastHLine()
+	TFTscreen.stroke(COLOR_WHITE);
+	TFTscreen.text("SCORE: ", 90, 15);
+	draw_score();
 }
 
-bool game_over = false;
 void loop() {
 	static unsigned long block_ms = 0;
-	myMario.walking();
-	myMario.jumping(2000,4);
-	if(millis() - block_ms >= BLOCK_MILLIS){
-		block_ms = millis();
-		move_blocks();
-		check_collision(block_g);
-		check_collision(block_r);
+	if(!game_over){
+		myMario.walking();
+		myMario.jumping(2000,4);
+		if(millis() - block_ms >= BLOCK_MILLIS){
+			block_ms = millis();
+			move_blocks();
+			if(!myMario.isJumping){
+				check_collision(block_g);
+				check_collision(block_r);
+			}
+		}
 	}
 }
 
-typedef enum {	s0, s1, s2}  block_state;
 void move_blocks() {
 	static block_state bs = s0;
-	if(game_over) bs = s2;
 	switch(bs) {
 		case s0:
 			block_g.posX -= BLOCK_SPEED;
@@ -114,9 +118,13 @@ void move_blocks() {
 			block_r.posX -= BLOCK_SPEED;
 			if(block_g.posX <= COURT_X){
 				block_g.posX = COURT_X + COURT_W - BLOCK_SIZE - 1;
+				score+=1;
+				draw_score();
 			}
 			if(block_r.posX <= COURT_X){
 				block_r.posX = COURT_X + COURT_W - BLOCK_SIZE - 1;
+				score+=1;
+				draw_score();
 			}
 			break;
 			
@@ -145,6 +153,40 @@ void draw_block(block b){
 void check_collision(block b){
 	if(b.posX < myMario.posX + myMario.w && myMario.posX < b.posX + b.w){
 		game_over = true;
+<<<<<<< HEAD
+=======
+		endgame();
+>>>>>>> 2035f6608520383195a11a13325db7644b7c1765
 	}
+}
+
+void endgame(){
+	TFTscreen.stroke(COLOR_RED);
+	TFTscreen.setTextSize(2);
+	TFTscreen.text("GAME OVER", 28, 40);
+	//TFTscreen.drawRect(26, 40, 12, 16, COLOR_WHITE);
+}
+
+void int_to_str(char arr[], int val){
+	int num;
+	for(int i = strSize - 2; i >=0; i--){
+		num = val%10;
+		arr[i] = '0' + num;
+		val/=10;
+	}
+	for(int i = 0; i < strSize - 2; i++){
+		if(arr[i] == '0'){
+			arr[i] = ' ';
+		}
+	}
+}
+
+void draw_score(){
+	TFTscreen.setTextSize(1);
+	TFTscreen.stroke(COLOR_BLACK);
+	TFTscreen.text(score_str, 135, 15); // Must erase previous score
+	int_to_str(score_str, score);
+	TFTscreen.stroke(COLOR_WHITE);
+	TFTscreen.text(score_str, 135, 15);
 }
 
