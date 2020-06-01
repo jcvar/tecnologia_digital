@@ -33,6 +33,8 @@ Mario myMario;
 typedef struct {
 	int posX;
 	int posY;
+	int oldX;
+	int oldY;
 	int w;
 	int h;
 	word color;
@@ -58,12 +60,16 @@ void setup() {
 	block_g = {
 		COURT_X + COURT_W - BLOCK_SIZE - 1,
 		COURT_Y + COURT_H - BLOCK_SIZE - 1,
+		COURT_X + COURT_W - BLOCK_SIZE - 1,
+		COURT_Y + COURT_H - BLOCK_SIZE - 1,
 		BLOCK_SIZE,
 		BLOCK_SIZE,
 		COLOR_GREEN,
 	};
 
 	block_r = {
+		COURT_X + COURT_W - BLOCK_SIZE - 1,
+		COURT_Y + COURT_H - BLOCK_SIZE - 1,
 		COURT_X + COURT_W - BLOCK_SIZE - 1,
 		COURT_Y + COURT_H - BLOCK_SIZE - 1,
 		BLOCK_SIZE,
@@ -84,21 +90,40 @@ void loop() {
 }
 
 
+typedef enum block_state {s0, s1, s2};
 void move_blocks() {
-
-	typedef enum block_state {s0, s1, s2};
 	static block_state bs = s0;
 	switch(bs) {
 		case s0:
-			if (block_g.posX > 
+			block_g.posX -= 1;
+			if (block_g.posX == 80){
+				bs = s1;
+			}
 		break;
-		case s0:
+
+		case s1:
+			block_g.posX -= 1;
+			block_r.posX -= 1;
 		break;
-		case s0:
-		break;
-		case s0:
+		
+		case s2:
+			// GAME OVER
 		break;
 	}
 	
+	if (block_g.posX != block_g.oldX || block_g.posY != block_g.oldY){
+		draw_rect(block_g);
+		block_g.oldX = block_g.posX;
+		block_g.oldY = block_g.posY;
+	}
+	if (block_r.posX != block_r.oldX || block_r.posY != block_r.oldY){
+		draw_rect(block_r);
+		block_r.oldX = block_r.posX;
+		block_r.oldY = block_r.posY;
+	}
+}
 
+void draw_rect(block b){
+	TFTscreen.drawFillRect(b.oldX, b.oldY, b.w, b.h, COLOR_BLACK);
+	TFTscreen.drawFillRect(b.posX, b.posY, b.w, b.h, b.color);
 }
