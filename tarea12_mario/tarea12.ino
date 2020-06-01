@@ -27,6 +27,8 @@ Universidad Nacional de Colombia
 //courtRightLine=courtX+courtW;
 
 #define BLOCK_SIZE 10
+#define BLOCK_MILLIS 100
+#define BLOCK_SPEED 2
 
 Mario myMario;
 
@@ -61,6 +63,9 @@ block block_r = {
 		COLOR_RED
 	};
 
+// Function declatarions
+void check_collision(block);
+void draw_block(block);
 
 void setup() {
 	TFTscreen.begin();
@@ -79,49 +84,68 @@ void setup() {
 	//TFTscreen.drawFastHLine()
 }
 
-
+bool game_over = false;
 void loop() {
+	static unsigned long block_ms = 0;
 	myMario.walking();
-	myMario.jumping(2000,4);		
-	move_blocks();
-}
-
-void draw_rect(block b){
-	TFTscreen.fillRect(b.oldX, b.oldY, b.w, b.h, COLOR_BLACK);
-	TFTscreen.fillRect(b.posX, b.posY, b.w, b.h, b.color);
+	myMario.jumping(2000,4);
+	if(millis() - block_ms >= BLOCK_MILLIS){
+		block_ms = millis();
+		move_blocks();
+		check_collision(block_g);
+		check_collision(block_r);
+	}
 }
 
 typedef enum {	s0, s1, s2}  block_state;
-
 void move_blocks() {
 	static block_state bs = s0;
+	if(game_over) bs = s2;
 	switch(bs) {
 		case s0:
-			block_g.posX -= 1;
-			if (block_g.posX == 80){
+			block_g.posX -= BLOCK_SPEED;
+			if (block_g.posX <= 80){
 				bs = s1;
 			}
 			break;
 			
 		case s1:
-			block_g.posX -= 1;
-			block_r.posX -= 1;
+			block_g.posX -= BLOCK_SPEED;
+			block_r.posX -= BLOCK_SPEED;
+			if(block_g.posX <= COURT_X){
+				block_g.posX = COURT_X + COURT_W - BLOCK_SIZE - 1;
+			}
+			if(block_r.posX <= COURT_X){
+				block_r.posX = COURT_X + COURT_W - BLOCK_SIZE - 1;
+			}
 			break;
 			
 		case s2:
 			// GAME OVER
 			break;
 	}
-	
-	if (block_g.posX != block_g.oldX || block_g.posY != block_g.oldY){
-		draw_rect(block_g);
+
+	if (block_g.posX != block_g.oldX){// || block_g.posY != block_g.oldY){
+		draw_block(block_g);
 		block_g.oldX = block_g.posX;
-		block_g.oldY = block_g.posY;
+		//block_g.oldY = block_g.posY;
 	}
-	if (block_r.posX != block_r.oldX || block_r.posY != block_r.oldY){
-		draw_rect(block_r);
+	if (block_r.posX != block_r.oldX){// || block_r.posY != block_r.oldY){
+		draw_block(block_r);
 		block_r.oldX = block_r.posX;
-		block_r.oldY = block_r.posY;
+		//block_r.oldY = block_r.posY;
+	}
+}
+
+void draw_block(block b){
+	TFTscreen.fillRect(b.oldX, b.oldY, b.w, b.h, COLOR_BLACK);
+	TFTscreen.fillRect(b.posX, b.posY, b.w, b.h, b.color);
+}
+
+void check_collision(block b){
+	if(b.posX < myMario.posX + myMario.w && myMario.posX < b.posX + b.w){
+		game_over = true;
+		return;
 	}
 }
 
