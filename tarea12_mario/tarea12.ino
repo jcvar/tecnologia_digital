@@ -124,13 +124,13 @@ void move_blocks() {
 			// GAME OVER
 			break;
 	}
-
-	if (block_g.posX != block_g.oldX){// || block_g.posY != block_g.oldY){
+	
+	if (block_g.posX != block_g.oldX){	// || block_g.posY != block_g.oldY){
 		draw_block(block_g);
 		block_g.oldX = block_g.posX;
 		//block_g.oldY = block_g.posY;
 	}
-	if (block_r.posX != block_r.oldX){// || block_r.posY != block_r.oldY){
+	if (block_r.posX != block_r.oldX){	// || block_r.posY != block_r.oldY){
 		draw_block(block_r);
 		block_r.oldX = block_r.posX;
 		//block_r.oldY = block_r.posY;
@@ -145,7 +145,6 @@ void draw_block(block b){
 void check_collision(block b){
 	if(b.posX < myMario.posX + myMario.w && myMario.posX < b.posX + b.w){
 		game_over = true;
-		return;
 	}
 }
 
