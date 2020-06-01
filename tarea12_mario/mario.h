@@ -26,8 +26,8 @@ class Mario {
 	int posX;
 	int posY;
 	int jumpPosY;
-	const int w = 16; // Width
-	const int h = 28; // Height
+	static const int w = 16; // Width
+	static const int h = 28; // Height
 	unsigned int walkingDelay;
 	bool isJumping;
 	

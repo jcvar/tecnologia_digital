@@ -41,8 +41,25 @@ typedef struct {
 } block;
 
 
-block block_g;
-block block_r;
+block block_g = {
+		COURT_X + COURT_W - BLOCK_SIZE - 1,
+		COURT_Y + COURT_H - BLOCK_SIZE - 1,
+		COURT_X + COURT_W - BLOCK_SIZE - 1,
+		COURT_Y + COURT_H - BLOCK_SIZE - 1,
+		BLOCK_SIZE,
+		BLOCK_SIZE,
+		COLOR_GREEN
+	};
+
+block block_r = {
+		COURT_X + COURT_W - BLOCK_SIZE - 1,
+		COURT_Y + COURT_H - BLOCK_SIZE - 1,
+		COURT_X + COURT_W - BLOCK_SIZE - 1,
+		COURT_Y + COURT_H - BLOCK_SIZE - 1,
+		BLOCK_SIZE,
+		BLOCK_SIZE,
+		COLOR_RED
+	};
 
 
 void setup() {
@@ -56,26 +73,6 @@ void setup() {
 	myMario.isJumping=false;
 	myMario.state=t0;
 	myMario.walkingDelay=150;
-
-	block_g = {
-		COURT_X + COURT_W - BLOCK_SIZE - 1,
-		COURT_Y + COURT_H - BLOCK_SIZE - 1,
-		COURT_X + COURT_W - BLOCK_SIZE - 1,
-		COURT_Y + COURT_H - BLOCK_SIZE - 1,
-		BLOCK_SIZE,
-		BLOCK_SIZE,
-		COLOR_GREEN,
-	};
-
-	block_r = {
-		COURT_X + COURT_W - BLOCK_SIZE - 1,
-		COURT_Y + COURT_H - BLOCK_SIZE - 1,
-		COURT_X + COURT_W - BLOCK_SIZE - 1,
-		COURT_Y + COURT_H - BLOCK_SIZE - 1,
-		BLOCK_SIZE,
-		BLOCK_SIZE,
-		COLOR_RED,
-	};
 	
 	// Draw court and ground
 	TFTscreen.drawRect(COURT_X, COURT_Y, COURT_W, COURT_H, COLOR_RED);
@@ -89,8 +86,13 @@ void loop() {
 	move_blocks();
 }
 
+void draw_rect(block b){
+	TFTscreen.fillRect(b.oldX, b.oldY, b.w, b.h, COLOR_BLACK);
+	TFTscreen.fillRect(b.posX, b.posY, b.w, b.h, b.color);
+}
 
-typedef enum block_state {s0, s1, s2};
+typedef enum {	s0, s1, s2}  block_state;
+
 void move_blocks() {
 	static block_state bs = s0;
 	switch(bs) {
@@ -99,16 +101,16 @@ void move_blocks() {
 			if (block_g.posX == 80){
 				bs = s1;
 			}
-		break;
-
+			break;
+			
 		case s1:
 			block_g.posX -= 1;
 			block_r.posX -= 1;
-		break;
-		
+			break;
+			
 		case s2:
 			// GAME OVER
-		break;
+			break;
 	}
 	
 	if (block_g.posX != block_g.oldX || block_g.posY != block_g.oldY){
@@ -123,7 +125,3 @@ void move_blocks() {
 	}
 }
 
-void draw_rect(block b){
-	TFTscreen.drawFillRect(b.oldX, b.oldY, b.w, b.h, COLOR_BLACK);
-	TFTscreen.drawFillRect(b.posX, b.posY, b.w, b.h, b.color);
-}
