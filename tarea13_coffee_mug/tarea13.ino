@@ -61,6 +61,7 @@ void int_to_str(char arr[], int val){
 	for(int i = 0; i < strSize - 2; i++){
 		if(arr[i] == '0'){
 			arr[i] = ' ';
+			break;
 		}
 	}
 }
