@@ -10,5 +10,5 @@ Universidad Nacional de Colombia\
 
 ----
 
-Ejemplos y tareas del curso de Tecnología Digital, una electiva de fundamentos de sistemas embebidos desarrollada usando la plataforma Arduino.
+Ejemplos y tareas del curso de Tecnología Digital, una electiva sobre fundamentos de sistemas embebidos desarrollada usando la plataforma Arduino.
 
