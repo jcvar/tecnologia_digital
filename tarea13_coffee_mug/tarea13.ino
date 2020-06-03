@@ -9,16 +9,8 @@ Tecnologia Digital
 Universidad Nacional de Colombia
 2020-06-03
 */
-#include <TFT.h>
-//#include <SPI.h>
-#include <avr/pgmspace.h>
+#include "common.h"
 #include "coffee_mug.h"
-
-// Court parameters
-#define COURT_X 5
-#define COURT_Y 10
-#define COURT_W 150
-#define COURT_H 108
 
 #define ANALOG_PIN A0
 #define MILLIS 200
@@ -28,7 +20,7 @@ int sensor = 0;
 
 // Function declatarions
 void draw_mug(int);
-void draw_val();
+void print_val();
 
 void setup() {
 	TFTscreen.begin();
@@ -39,7 +31,7 @@ void setup() {
 	//TFTscreen.drawFastHLine()
 	TFTscreen.stroke(COLOR_WHITE);
 	TFTscreen.text("SENSOR: ", 90, 15);
-	draw_val();
+	print_val();
 }
 
 void loop() {
@@ -48,10 +40,16 @@ void loop() {
 		prev_ms = millis();
 		sensor = analogRead(ANALOG_PIN);
 		draw_mug(sensor);
+		print_val();
 	}
 }
 
-
+void draw_mug(int val){
+	static int fill = 0;
+	fill = map(val, 0, 1023, 0, 31);
+	TFTscreen.fillRect(0, 0, 32, fill, COLOR_RED);
+	TFTscreen.fillRect(0, fill, 32, 32-fill, COLOR_BLACK);
+}
 
 void int_to_str(char arr[], int val){
 	int num;
@@ -67,12 +65,12 @@ void int_to_str(char arr[], int val){
 	}
 }
 
-void draw_val(){
+void print_val(){
 	TFTscreen.setTextSize(1);
 	TFTscreen.stroke(COLOR_BLACK);
 	TFTscreen.text(val_str, 135, 15); // Must erase previous score
 	int_to_str(val_str, sensor);
 	TFTscreen.stroke(COLOR_WHITE);
-	TFTscreen.text(score_str, 135, 15);
+	TFTscreen.text(val_str, 135, 15);
 }
 
