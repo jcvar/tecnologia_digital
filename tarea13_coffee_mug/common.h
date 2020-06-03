@@ -1,7 +1,7 @@
 // COMMON DEFINITIONS
 #include <TFT.h>
 #include <SPI.h>
-#include <pgmspace.h>
+#include <avr/pgmspace.h>
 
 // TFT DEFINITIONS
 #define cs  10
