@@ -153,10 +153,7 @@ void draw_block(block b){
 void check_collision(block b){
 	if(b.posX < myMario.posX + myMario.w && myMario.posX < b.posX + b.w){
 		game_over = true;
-<<<<<<< HEAD
-=======
 		endgame();
->>>>>>> 2035f6608520383195a11a13325db7644b7c1765
 	}
 }
 
