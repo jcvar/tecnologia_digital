@@ -14,14 +14,14 @@ Universidad Nacional de Colombia
 
 #define COLOR_COLA 0x3984
 // Image params
-#define X 72
-#define Y 48
+#define X 64
+#define Y 32
 #define W 16
 #define H 32
 
 // // Fill params
 #define FX 80
-#define FY 48
+#define FY 32
 #define FW 16
 #define FH 30
 
@@ -34,12 +34,12 @@ char val_str[strSize] = {0, 0, 0, 0};
 int sensor = 0;
 
 // Function declatarions
-void draw_image(int, int, int, int);
+void draw_image2x(int, int, int, int);
 void draw_cola(int, int, int, int, int);
 void print_val(char[], int);
 
 // Fill line sizes (bottom to top)
-const int fill_size[31] = {4, 5, 5, 5, 4, 4, 4, 3, 3, 3, 4, 4, 4, 5, 0, 0, 0, 0, 0, 0, 5, 4, 4, 3, 3, 2, 2, 2, 2, 3, 2};
+const int fill_size[32] = {4, 5, 5, 5, 4, 4, 4, 3, 3, 3, 4, 4, 4, 5, 0, 0, 0, 0, 0, 0, 5, 4, 4, 3, 3, 2, 2, 2, 2, 3, 4, 3};
 
 void setup() {
 	TFTscreen.begin();
@@ -47,7 +47,7 @@ void setup() {
 	
 	// Draw court and cola
 	TFTscreen.drawRect(COURT_X, COURT_Y, COURT_W, COURT_H, COLOR_RED);
-	draw_image(X, Y, W, H);
+	draw_image2x(X, Y, W, H);
 	
 	// Print sensor info
 	TFTscreen.stroke(COLOR_WHITE);
@@ -70,19 +70,23 @@ void draw_cola(int val, int fx, int fy, int fw, int fh){
 	static int fill = 0;
 	fill = map(val, 0, 1023, 0, fh);
 	
-	draw_image(X, Y, W, 2);
+	draw_image2x(X, Y, W, 2);
 	
 	for(int i = 0; i < fh; i++){
 		if(i < fill){
-			TFTscreen.drawFastHLine(fx-fill_size[i], fy + fh - i, fill_size[i]*2, COLOR_YELLOW);
+			TFTscreen.drawFastHLine(fx-fill_size[i]*2, fy + (fh - i)*2 + 1, fill_size[i]*4, COLOR_MAGENTA);
+			TFTscreen.drawFastHLine(fx-fill_size[i]*2, fy + (fh - i)*2, fill_size[i]*4, COLOR_MAGENTA);
 		}else{
-			TFTscreen.drawFastHLine(fx-fill_size[i], fy + fh - i, fill_size[i]*2, COLOR_BLACK);
+			TFTscreen.drawFastHLine(fx-fill_size[i]*2, fy + (fh - i)*2 + 1, fill_size[i]*4, COLOR_BLACK);
+			TFTscreen.drawFastHLine(fx-fill_size[i]*2, fy + (fh - i)*2, fill_size[i]*4, COLOR_BLACK);
 		}
 	}
 	
 	if(fill == fh){
-		TFTscreen.drawFastHLine(fx-fill_size[29], fy + fh - 29, fill_size[29]*2, COLOR_RED);
-		TFTscreen.drawFastHLine(fx-fill_size[30], fy + fh - 29, fill_size[30]*2, COLOR_RED);
+		TFTscreen.drawFastHLine(fx-fill_size[30]*2, fy + (fh - 29)*2 + 1, fill_size[30]*4, COLOR_RED);
+		TFTscreen.drawFastHLine(fx-fill_size[30]*2, fy + (fh - 29)*2, fill_size[30]*4, COLOR_RED);
+		TFTscreen.drawFastHLine(fx-fill_size[31]*2, fy + (fh - 30)*2 + 1, fill_size[31]*4, COLOR_RED);
+		TFTscreen.drawFastHLine(fx-fill_size[31]*2, fy + (fh - 30)*2, fill_size[31]*4, COLOR_RED);
 	}
 }
 
@@ -111,11 +115,14 @@ void print_val(char str[], int pr_val){
 	TFTscreen.text(str, 128, 12);
 }
 
-void draw_image(int x, int y, int w, int h){
+void draw_image2x(int x, int y, int w, int h){
 	for (int row=0; row<h; row++){
 		for (int col=0; col<w; col++){
 			word p = pgm_read_word(cola_img + (w * row + col));
-			TFTscreen.drawPixel(x + col, y + row, p);
+			TFTscreen.drawPixel(x + 2*col, y + 2*row, p);
+			TFTscreen.drawPixel(x + 2*col + 1, y + 2*row, p);
+			TFTscreen.drawPixel(x + 2*col, y + 2*row + 1, p);
+			TFTscreen.drawPixel(x + 2*col + 1, y + 2*row + 1, p);
 		}
 	}
 }
