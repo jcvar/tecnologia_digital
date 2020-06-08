@@ -13,6 +13,8 @@ Universidad Nacional de Colombia
 #include "cola.h"
 
 #define COLOR_COLA 0x3984
+#define COLOR_FILL COLOR_COLA
+#define COLOR_EMPTY COLOR_WHITE
 // Image params
 #define X 64
 #define Y 32
@@ -46,6 +48,7 @@ void setup() {
 	TFTscreen.background(0, 0, 0);
 	
 	// Draw court and cola
+	TFTscreen.fillRect(COURT_X, Y, COURT_W, H*2, COLOR_EMPTY);
 	TFTscreen.drawRect(COURT_X, COURT_Y, COURT_W, COURT_H, COLOR_RED);
 	draw_image2x(X, Y, W, H);
 	
@@ -74,11 +77,11 @@ void draw_cola(int val, int fx, int fy, int fw, int fh){
 	
 	for(int i = 0; i < fh; i++){
 		if(i < fill){
-			TFTscreen.drawFastHLine(fx-fill_size[i]*2, fy + (fh - i)*2 + 1, fill_size[i]*4, COLOR_MAGENTA);
-			TFTscreen.drawFastHLine(fx-fill_size[i]*2, fy + (fh - i)*2, fill_size[i]*4, COLOR_MAGENTA);
+			TFTscreen.drawFastHLine(fx-fill_size[i]*2, fy + (fh - i)*2 + 1, fill_size[i]*4, COLOR_FILL);
+			TFTscreen.drawFastHLine(fx-fill_size[i]*2, fy + (fh - i)*2, fill_size[i]*4, COLOR_FILL);
 		}else{
-			TFTscreen.drawFastHLine(fx-fill_size[i]*2, fy + (fh - i)*2 + 1, fill_size[i]*4, COLOR_BLACK);
-			TFTscreen.drawFastHLine(fx-fill_size[i]*2, fy + (fh - i)*2, fill_size[i]*4, COLOR_BLACK);
+			TFTscreen.drawFastHLine(fx-fill_size[i]*2, fy + (fh - i)*2 + 1, fill_size[i]*4, COLOR_EMPTY);
+			TFTscreen.drawFastHLine(fx-fill_size[i]*2, fy + (fh - i)*2, fill_size[i]*4, COLOR_EMPTY);
 		}
 	}
 	
@@ -119,6 +122,7 @@ void draw_image2x(int x, int y, int w, int h){
 	for (int row=0; row<h; row++){
 		for (int col=0; col<w; col++){
 			word p = pgm_read_word(cola_img + (w * row + col));
+			if(p == COLOR_BLACK) p = COLOR_EMPTY;
 			TFTscreen.drawPixel(x + 2*col, y + 2*row, p);
 			TFTscreen.drawPixel(x + 2*col + 1, y + 2*row, p);
 			TFTscreen.drawPixel(x + 2*col, y + 2*row + 1, p);
