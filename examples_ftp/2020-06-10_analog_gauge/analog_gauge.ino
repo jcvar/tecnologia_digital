@@ -2,9 +2,9 @@
 
 #define MILLIS 200
 #define ANALOG_PIN A0
-#define CX 80
-#define CY 96
-#define RAD 20
+#define X 80
+#define Y 96
+#define RAD 64
 
 int sensor = 0;
 
@@ -24,18 +24,52 @@ void loop() {
 	if (millis() - prev_ms >= MILLIS) {
 		prev_ms = millis();
 		sensor = analogRead(ANALOG_PIN);
-		draw_gauge(sensor, CX, CY, RAD);
+		draw_gauge(sensor, X, Y, RAD);
 	}
 }
 
+double angle = 0;
+double arcx = 0;
+double arcy = 0;
+
 void draw_gauge(int val, int cx, int cy, int rad) {	// val, center x, y
-	static int angle = 0;
-	static float arcx = 0;
-	static float arcy = 0;
+	//static int angle = 0;
+	//static float arcx = 0;
+	//static float arcy = 0;
 	
-	angle = map(val, 0, 1023, PI, 0);
-	arcx = cos(angle)*rad*rad + cx;
-	arcy = sin(angle)*rad + cy;
+	TFTscreen.fillCircle(arcx, arcy, 4, COLOR_BLACK);
+	TFTscreen.fillCircle(arcx, arcy, 4, COLOR_BLACK);
+	TFTscreen.fillCircle(arcx, arcy, 4, COLOR_BLACK);
+	TFTscreen.fillCircle(arcx, arcy, 4, COLOR_BLACK);
 	
-	TFTscreen.drawLine(arcx, arcy, cx, cy, COLOR_RED);
+	if(angle >= PI*3/4){
+		TFTscreen.drawLine(arcx, arcy, cx, cy, COLOR_BLACK);
+	} else if(angle >= PI/2){
+		TFTscreen.drawLine(arcx, arcy, cx, cy, COLOR_BLACK);
+		TFTscreen.drawLine(cx, cy, arcx, arcy, COLOR_BLACK);
+	} else if(angle >= PI/4){
+		TFTscreen.drawLine(cx, cy, arcx, arcy, COLOR_BLACK);
+		TFTscreen.drawLine(arcx, arcy, cx, cy, COLOR_BLACK);
+	} else if(angle >= 0){
+		TFTscreen.drawLine(cx, cy, arcx, arcy, COLOR_BLACK);
+	}
+	
+	angle = PI-PI*(val/1023.0);
+	arcx = cos(angle)*rad + cx;
+	arcy = -sin(angle)*rad + cy;
+	
+	
+	TFTscreen.fillCircle(arcx, arcy, 4, COLOR_GREEN);
+	if(angle >= PI*3/4){
+		TFTscreen.drawLine(arcx, arcy, cx, cy, COLOR_RED);
+	} else if(angle >= PI/2){
+		TFTscreen.drawLine(arcx, arcy, cx, cy, COLOR_RED);
+		TFTscreen.drawLine(cx, cy, arcx, arcy, COLOR_RED);
+	} else if(angle >= PI/4){
+		TFTscreen.drawLine(arcx, arcy, cx, cy, COLOR_RED);
+		TFTscreen.drawLine(cx, cy, arcx, arcy, COLOR_RED);
+	} else if(angle >= 0){
+		TFTscreen.drawLine(cx, cy, arcx, arcy, COLOR_RED);
+	}
+	
 }
