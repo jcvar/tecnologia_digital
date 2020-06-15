@@ -1,21 +1,8 @@
-#include <TFT.h>
-#include <SPI.h>
-// Screen definitions and initialization
-#define cs   10
-#define dc   9
-#define rst  8
-TFT TFTscreen = TFT(cs, dc, rst);
+#include "../common.h"
 
-// Some ready-made 16-bit ('565') color settings:
-#define COLOR_BLACK 0x0000
-#define COLOR_WHITE 0xFFFF
-#define COLOR_RED 0xF800
-#define COLOR_GREEN 0x07E0
-#define COLOR_BLUE 0x001F
-#define COLOR_CYAN 0x07FF
-#define COLOR_MAGENTA 0xF81F
-#define COLOR_YELLOW 0xFFE0
-#define COLOR_ORANGE 0xFC00
+TFT TFTscreen = TFT(CS, DC, RST);
+
+court_t court; // court instance
 
 // Ball parameters
 #define BALL_SIZE 5
@@ -23,11 +10,6 @@ TFT TFTscreen = TFT(cs, dc, rst);
 #define BALL_INITY 11
 #define BALL_MILLIS_A 10
 #define BALL_MILLIS_B 25
-// Court parameters
-#define COURT_X 5
-#define COURT_Y 10
-#define COURT_W 150
-#define COURT_H 108
 
 // Ball structure
 struct ball_t {
@@ -44,15 +26,6 @@ struct ball_t {
 };
 ball_t ballA, ballB; // ball instances
 
-// Court structure
-struct court_t {
-	int top;
-	int bottom;
-	int left;
-	int right;
-};
-court_t court; // court instance
-
 enum state_t {	s0, s1, s2, s3, s4}; // ball states
 state_t ballA_state = s0;
 state_t ballB_state = s0;
@@ -60,7 +33,6 @@ state_t ballB_state = s0;
 void setup() {
 	TFTscreen.begin(); // initialize the display
 	TFTscreen.background(0, 0, 0); // black background
-	
 	// Court initialization
 	court.top = COURT_Y;
 	court.bottom = COURT_Y + COURT_H;
@@ -68,7 +40,7 @@ void setup() {
 	court.right = COURT_X + COURT_W;
 	// Draw court
 	TFTscreen.drawRect(COURT_X, COURT_Y, COURT_W, COURT_H, COLOR_RED);
-	
+
 	// Ball A initialization
 	ballA.color = COLOR_YELLOW;
 	ballA.width = BALL_SIZE;
@@ -78,7 +50,7 @@ void setup() {
 	ballA.speedX = 1;
 	ballA.speedY  = 1;
 	ballA.prevMillis = 0;
-	
+
 	// Ball B initialization
 	ballB.color = COLOR_CYAN;
 	ballB.width = BALL_SIZE;
@@ -88,7 +60,7 @@ void setup() {
 	ballB.speedX = 1;
 	ballB.speedY  = 1;
 	ballB.prevMillis = 0;
-	
+
 	TFTscreen.fillRect(ballA.posX, ballA.posY, ballA.width, ballA.height, ballA.color);
 	TFTscreen.fillRect(ballB.posX, ballB.posY, ballB.width, ballB.height, ballB.color);
 	delay(1000);
@@ -167,7 +139,6 @@ void moveBallA() {
 		drawBall(&ballA);
 	}
 }
-
 
 void moveBallB(){
 	ballB.oldX = ballB.posX;
