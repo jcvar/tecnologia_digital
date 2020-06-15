@@ -1,8 +1,8 @@
 # Tecnología Digital
 
 Grupo de trabajo #4
-- Juan Camilo Vargas Q. [jcvar](github.com/jcvar)
-- Sergio Alejandro Vargas Q. [savargasqu](github.com/savargasqu)
+- Juan Camilo Vargas Q. [jcvar](https://github.com/jcvar)
+- Sergio Alejandro Vargas Q. [savargasqu](https://github.com/savargasqu)
 
 Facultad de Ingeniería\
 Universidad Nacional de Colombia\
