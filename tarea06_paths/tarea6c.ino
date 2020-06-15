@@ -1,21 +1,8 @@
 /*
 	moving square in a court
 */
-
-#include <TFT.h>  // Arduino LCD library
-#include <SPI.h>
-
-// pin definition for the Uno
-#define cs   10
-#define dc   9
-#define rst  8
-
-// pin definition for the Leonardo
-// #define cs   7
-// #define dc   0
-// #define rst  1
-
-TFT TFTscreen = TFT(cs, dc, rst);
+#include "../common.h"
+TFT TFTscreen = TFT(CS, DC, RST);
 
 // ball direction parameters
 int ballDirectionX = 1;
@@ -26,9 +13,8 @@ int initBallX=6,initBallY=11;
 float ballX=initBallX, ballY=initBallY, oldBallX, oldBallY;
 int ballW=5,ballH=5;
 
-// court parameters
-int courtX=5,courtY=10,courtW=150,courtH=108;
-int courtTopLine=0,courtBottomLine=0,courtLeftLine=0,courtRightLine=0;
+// court instance
+court_t court;
 
 // ball move state
 enum state_t {	sx, sd, sy};
@@ -39,22 +25,20 @@ void setup() {
 	TFTscreen.begin();
 	// black background
 	TFTscreen.background(0, 0, 0);
-	
 	// draw court
-	TFTscreen.drawRect(courtX, courtY, courtW,courtH,0xF800);
+	TFTscreen.drawRect(COURT_X, COURT_Y, COURT_W, COURT_H, COLOR_RED);
 	
 	// court limits
-	courtTopLine=courtY;
-	courtBottomLine=courtY+courtH;
-	courtLeftLine=courtX;
-	courtRightLine=courtX+courtW;
-	
+	court.top=COURT_Y;
+	court.bottom=COURT_Y+courtH;
+	court.left=COURT_X;
+	court.right=COURT_X+COURT_W;
+
 	delay(2000);
-	
 }
 
 void loop() {
-	TFTscreen.drawRect(5, 10, 150, 108,0xF800);
+	TFTscreen.drawRect(COURT_X, COURT_Y, COURT_W, COURT_H, COLOR_RED);
 	moveBall();
 	delay(25);
 }
@@ -69,21 +53,21 @@ void moveBall(){
 			//ballY += ballDirectionY;
 			if(ballX == (80) - 2 && ballDirectionX > 0){
 				state=sd;
-			} else if (ballX == (courtLeftLine)+1){
+			} else if (ballX == (court.left)+1){
 				state=sy;
 			}
 			break;
 		case sd:
 			ballX += ballDirectionX;
 			ballY += slope* ballDirectionY;
-			if(ballY > (courtBottomLine-ballH)-2){
+			if(ballY > (court.bottom-ballH)-2){
 				count++;
 				ballDirectionX*=-1;
 				ballDirectionY*=-1;
 				if(count==3){
 					state = sx;
 				}
-			} else  if(ballY < (courtTopLine)+2){
+			} else  if(ballY < (court.top)+2){
 				ballDirectionX*=-1;
 				ballDirectionY*=-1;
 			}
@@ -96,18 +80,15 @@ void moveBall(){
 			break;
 	}
 	
-	// erase the ball's previous position
-	TFTscreen.fill(0, 0, 0);
-	
+	// If the ball moved
 	if (oldBallX != ballX || oldBallY != ballY) {
+		// erase the ball's previous position
+		TFTscreen.fill(0, 0, 0);
 		TFTscreen.rect(oldBallX, oldBallY, ballW, ballH);
+		// draw the ball's current position
+		TFTscreen.fill(255, 255, 0);
+		TFTscreen.rect(ballX, ballY, ballW, ballH);
 	}
-	
-	// draw the ball's current position
-	TFTscreen.fill(255, 255, 0);
-	TFTscreen.rect(ballX, ballY, ballW, ballH);
-	
 	oldBallX = ballX;
 	oldBallY = ballY;
-	
 }
