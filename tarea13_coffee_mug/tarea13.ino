@@ -9,8 +9,10 @@ Tecnologia Digital
 Universidad Nacional de Colombia
 2020-06-03
 */
-#include "common.h"
+#include "../common.h" // Remember to copy before being submitted
 #include "coffee_mug.h"
+
+TFT TFTscreen = TFT(CS, DC, RST);
 
 // Image params
 #define X 64
@@ -23,7 +25,6 @@ Universidad Nacional de Colombia
 #define FY 58
 #define FW 18
 #define FH 18
-
 
 #define ANALOG_PIN A0
 #define MILLIS 200

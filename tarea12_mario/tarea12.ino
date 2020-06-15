@@ -9,15 +9,11 @@ Tecnologia Digital
 Universidad Nacional de Colombia
 2020-06-01
 */
-#include <SPI.h>
+#include "../common.h" // Remember to copy before submitting
 #include "mario_img.h"
 #include "mario.h"
 
-// Court parameters
-#define COURT_X 5
-#define COURT_Y 10
-#define COURT_W 150
-#define COURT_H 108
+TFT TFTscreen = TFT(CS, DC, RST);
 
 // Block parameters
 #define BLOCK_SIZE 10

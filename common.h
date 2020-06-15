@@ -1,12 +1,12 @@
 // COMMON DEFINITIONS
-#include <TFT.h>
 #include <SPI.h>
-#include <avr/pgmspace.h>
+#include <TFT.h>
+//#include <avr/pgmspace.h>
 
 // TFT DEFINITIONS
-#define cs  10
-#define dc   9
-#define rst  8
+#define CS  10
+#define DC   9
+#define RST  8
 
 // 16-bit ('565') colors
 #define COLOR_BLACK 0x0000
@@ -32,3 +32,4 @@ typedef struct {
 	int left;
 	int right;
 } court_t;
+

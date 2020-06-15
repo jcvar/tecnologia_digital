@@ -9,8 +9,10 @@ Tecnologia Digital
 Universidad Nacional de Colombia
 2020-06-08
 */
-#include "common.h"
+#include "../common.h" // Remember to copy before being submitted
 #include "cola.h"
+
+TFT TFTscreen = TFT(CS, DC, RST);
 
 #define COLOR_COLA 0x3984
 #define COLOR_FILL COLOR_COLA
@@ -26,7 +28,6 @@ Universidad Nacional de Colombia
 #define FY 32
 #define FW 16
 #define FH 30
-
 
 #define ANALOG_PIN A0
 #define MILLIS 200
@@ -46,10 +47,12 @@ const int fill_size[32] = {4, 5, 5, 5, 4, 4, 4, 3, 3, 3, 4, 4, 4, 5, 0, 0, 0, 0,
 void setup() {
 	TFTscreen.begin();
 	TFTscreen.background(0, 0, 0);
-	
-	// Draw court and cola
-	TFTscreen.fillRect(COURT_X, Y, COURT_W, H*2, COLOR_EMPTY);
+
+	// Draw court
 	TFTscreen.drawRect(COURT_X, COURT_Y, COURT_W, COURT_H, COLOR_RED);
+	// Draw background
+	TFTscreen.fillRect(COURT_X, Y, COURT_W, H*2, COLOR_EMPTY);
+	// Draw cola
 	draw_image2x(X, Y, W, H);
 	
 	// Print sensor info
