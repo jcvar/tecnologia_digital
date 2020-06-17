@@ -25,7 +25,7 @@ class Ball {
 			TFTscr.fillRect(oldX, oldY, w, h, COLOR_BLACK);
 			for (int row = 0; row < h; row++) {
 				for (int col = 0; col < w; col++) {
-					word p = pgm_read_word(ballImage + row*w + col);
+					word p = pgm_read_word(tennis_ball + row*w + col);
 					TFTscr.drawPixel(col+posX, row+posY, p);
 				}
 			}
