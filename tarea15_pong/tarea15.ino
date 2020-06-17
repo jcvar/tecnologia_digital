@@ -36,9 +36,12 @@ Paddle left(court.left, court.top);
 Paddle right(court.right - PADDLE_W, court.top);
 
 bool check_collision(Ball b, Paddle p){
-	if(p.posX < myMario.posX + myMario.w && p.posX + p.w > myMario.posX){
+	if(p.posX < b.posX + b.w && p.posX + p.w > b.posX){
+		return true;
+	} else if (p.posY < b.posY + b.h && p.posX + p.h > b.posX){
 		return true;
 	}
+	return false;
 }
 
 
@@ -55,10 +58,6 @@ void loop() {
 	static unsigned long millis_left = 0;
 	static unsigned long millis_right = 0;
 	
-	if(millis() - millis_ball > MILLIS_BALL){
-		millis_ball = millis();
-		ball.move();
-	}
 	if(millis() - millis_left > MILLIS_PADDLE){
 		millis_left = millis();
 		left.move(map(analogRead(PIN_LEFT), 1023, 0, court.top, court.bottom - PADDLE_H));
@@ -66,6 +65,14 @@ void loop() {
 	if(millis() - millis_right > MILLIS_PADDLE){
 		millis_right = millis();
 		right.move(map(analogRead(PIN_RIGHT), 1023, 0, court.top, court.bottom - PADDLE_H));
+	}
+
+	if(millis() - millis_ball > MILLIS_BALL){
+		millis_ball = millis();
+		ball.move();
+		if(check_collision(ball, left) || check_collision(ball, right)){
+			ball.speedX *= -1;
+		}
 	}
 }
 

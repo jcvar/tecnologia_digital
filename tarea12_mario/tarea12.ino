@@ -10,10 +10,10 @@ Universidad Nacional de Colombia
 2020-06-01
 */
 #include "../common.h" // Remember to copy before submitting
+TFT TFTscreen = TFT(CS, DC, RST);
 #include "mario_img.h"
 #include "mario.h"
 
-TFT TFTscreen = TFT(CS, DC, RST);
 
 // Block parameters
 #define BLOCK_SIZE 10
