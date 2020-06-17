@@ -26,7 +26,7 @@ Universidad Nacional de Colombia
 #define PIN_RIGHT A1
 
 TFT TFTscreen = TFT(CS, DC, RST);
-court_t court = {COURT_Y + 5 - 1, COURT_Y + 5 + COURT_H - 1, COURT_X + 1, COURT_X + COURT_W - 1};
+court_t court = {COURT_Y + 5 + 1, COURT_Y + 5 + COURT_H - 1, COURT_X + 1, COURT_X + COURT_W - 1};
 
 // Ball(pX, pY, dX, dY);
 Ball ball(80, 64, 1, 1);
@@ -39,7 +39,7 @@ bool check_collision(Ball b, Paddle p){
 	if(p.posX <= b.posX + b.w &&
 		p.posX + p.w >= b.posX &&
 	p.posY <= b.posY + b.h &&
-	p.posX + p.h >= b.posX){
+	p.posY + p.h >= b.posY){
 		return true;
 	}
 	return false;
