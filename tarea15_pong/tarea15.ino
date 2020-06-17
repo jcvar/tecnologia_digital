@@ -35,6 +35,14 @@ Ball ball(80, 64, 1, 1);
 Paddle left(court.left, court.top);
 Paddle right(court.right - PADDLE_W, court.top);
 
+// Game variables
+bool game_over = false;
+const int strSize = 2;
+int score_left = -1;
+int score_right = -1;
+char score_str_left[strSize] = {0};
+char score_str_right[strSize] = {0};
+
 bool check_collision(Ball b, Paddle p){
 	if(p.posX <= b.posX + b.w &&
 		p.posX + p.w >= b.posX &&
@@ -45,6 +53,29 @@ bool check_collision(Ball b, Paddle p){
 	return false;
 }
 
+void update_score(int result){
+	if(result == -1){ // Goal on left side
+		score_right += 1;
+
+		TFTscreen.stroke(COLOR_BLACK);
+		TFTscreen.text(score_str_right, 114, 4); // Must erase previous score
+
+		score_str_right[0] = '0' + score_right;
+
+		TFTscreen.stroke(COLOR_WHITE);
+		TFTscreen.text(score_str_right, 114, 4);
+	} else if(result == 1){ // Goal on right side
+		score_left += 1;
+
+		TFTscreen.stroke(COLOR_BLACK);
+		TFTscreen.text(score_str_left, 40, 4); // Must erase previous score
+
+		score_str_left[0] = '0' + score_left;
+
+		TFTscreen.stroke(COLOR_WHITE);
+		TFTscreen.text(score_str_left, 40, 4);
+	}
+}
 
 void setup() {
 	// Initialize screen
@@ -52,6 +83,12 @@ void setup() {
 	TFTscreen.background(COLOR_BLACK);
 	// Draw court
 	TFTscreen.drawRect(COURT_X, COURT_Y + 5, COURT_W, COURT_H, COLOR_RED);
+
+	TFTscreen.stroke(COLOR_WHITE);
+	TFTscreen.text("SCORE", 65, 4);
+
+	update_score(-1);
+	update_score(1);
 }
 
 void loop() {
@@ -72,7 +109,7 @@ void loop() {
 	
 	if(millis() - millis_ball > MILLIS_BALL){
 		millis_ball = millis();
-		ball.move(court);
+		update_score(ball.move(court));
 		ball.draw(TFTscreen);
 		if(check_collision(ball, left) || check_collision(ball, right)){
 			ball.speedX *= -1;
