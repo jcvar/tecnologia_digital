@@ -1,56 +1,39 @@
-class Paddle
-{
+class Paddle{
 	public:
+	static const int w = 5;
+	static const int h = 20;
 	int posX;
 	int posY;
-	int oldPosY;
-	int deltaY;
-	unsigned long deltaTime;
+	int oldY;
+	int speedY;
+	unsigned long speedTime;
 	unsigned long previousMillis;
 	
-	Paddle(int t_posX,int t_posY,int t_deltaY,int t_deltaTime)
-	{
+	Paddle(int t_posX,int t_posY,int t_speedY,int t_speedTime){
 		posX=t_posX;
 		posY=t_posY;
-		deltaY=t_deltaY;
-		oldPosY=posY;
-		deltaTime=deltaTime;
+		speedY=t_speedY;
+		oldY=posY;
+		speedTime=speedTime;
 		previousMillis=0;	
 	}
-	
-	void move(int t_posY)
-	{
-		const int paddleWidth=5;
-		const int paddleHeight=20;
-		unsigned long currentMillis=0;
-		int w = paddleWidth;
-		int h = paddleHeight;
-		int row;
-		int col;
-		int buffidx=0;
-		
-		currentMillis=millis(); 
-		if(currentMillis-previousMillis>deltaTime){
-			previousMillis=currentMillis;
-			
-			posY=t_posY;
-			
-			// erase the paddle's previous position		
-			if (oldPosY != posY) {
-				TFTscreen.fillRect(posX,oldPosY,w,h,0x0099);
-			}
-			
-			//image reading:					
-			for (row=0; row<h; row++) {
-				for (col=0; col<w; col++) {
-					word p=pgm_read_word(paddle_a + buffidx);
-					TFTscreen.drawPixel(col+posX,row+posY,p);
-					buffidx++;
+
+	void draw(){
+		if (oldY != posY) {
+			TFTscreen.fillRect(posX, oldY, w, h, COLOR_BLACK);
+			for (int row=0; row<h; row++) {
+				for (int col=0; col<w; col++) {
+					word p=pgm_read_word(paddle_a + row*w + col);
+					TFTscreen.drawPixel(col+posX, row+posY, p);
 				}
-			}  	
-			
-			//update
-			oldPosY=posY;		
+			}
 		}
-	}
-};
+	}	// draw()
+	
+	void move(int t_posY){
+		posY=t_posY;
+		draw();
+		oldY=posY;		
+	}	// move()
+
+};	// class Paddle
