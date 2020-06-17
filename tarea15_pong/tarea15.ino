@@ -35,6 +35,13 @@ Ball ball(80, 64, 1, 1);
 Paddle left(court.left, court.top);
 Paddle right(court.right - PADDLE_W, court.top);
 
+bool check_collision(Ball b, Paddle p){
+	if(p.posX < myMario.posX + myMario.w && p.posX + p.w > myMario.posX){
+		return true;
+	}
+}
+
+
 void setup() {
 	// Initialize screen
 	TFTscreen.begin();
