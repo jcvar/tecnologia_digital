@@ -10,9 +10,10 @@ Universidad Nacional de Colombia
 2020-06-17
 */
 #include "../common.h"
-#include "images.h"
 TFT TFTscreen = TFT(CS, DC, RST);
+court_t court = {COURT_Y + 1, COURT_Y + COURT_H - 1, COURT_X + 1, COURT_X + COURT_W - 1};
 
+#include "images.h"
 #include "paddle.h"
 #include "ball.h"
 
@@ -27,10 +28,9 @@ TFT TFTscreen = TFT(CS, DC, RST);
 #define PIN_LEFT A0
 #define PIN_RIGHT A1
 
-court_t court = {COURT_Y + 1, COURT_Y + COURT_H - 1, COURT_X + 1, COURT_X + COURT_W - 1};
-
 // Ball(pX, pY, dX, dY);
 Ball ball(80, 64, 1, 1);
+
 // Paddle(pX, pY);
 Paddle left(court.left, court.top);
 Paddle right(court.right - PADDLE_W, court.top);

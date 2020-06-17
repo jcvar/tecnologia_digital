@@ -31,26 +31,26 @@ class Ball {
 			}
 		}
 	} // draw()
-
-	int move(){ // Return -1 or 1 for goal on left or right ends, else 0
-		if (posX <= COURT_X)  {
+	
+	int move(){	// Return -1 or 1 for goal on left or right ends, else 0
+		if (posX <= court.left)  {
 			return -1;
-		} else if (posX >= COURT_X + COURT_W - w) {
+		} else if (posX >= court.right - w) {
 			return 1;
 		}
-
-		if (posY <= COURT_Y || posY >= COURT_Y + COURT_H - h) {
+		
+		if (posY <= court.top || posY >= court.bottom - h) {
 			speedY = -speedY;
 		}
-
+		
 		posX += speedX;
 		posY += speedY;
 		draw();
 		oldX = posX; 
 		oldY = posY;
-
+		
 		return 0;
 	} // move()
-
+	
 }; // class Ball
 
