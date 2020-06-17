@@ -6,16 +6,12 @@ class Paddle{
 	int posY;
 	int oldY;
 	int speedY;
-	unsigned long speedTime;
-	unsigned long previousMillis;
 	
-	Paddle(int t_posX,int t_posY,int t_speedY,int t_speedTime){
+	Paddle(int t_posX, int t_posY, int t_speedY){
 		posX=t_posX;
 		posY=t_posY;
 		speedY=t_speedY;
-		oldY=posY;
-		speedTime=speedTime;
-		previousMillis=0;	
+		oldY=posY;	
 	}
 
 	void draw(){
