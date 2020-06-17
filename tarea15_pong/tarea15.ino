@@ -10,7 +10,8 @@ Universidad Nacional de Colombia
 2020-06-17
 */
 #include "../common.h"
-#include "images.h"
+//#include "images.h"
+#include "tennis_paddle.h"
 #include "tennis_ball.h"
 #include "paddle.h"
 #include "ball.h"
@@ -45,6 +46,7 @@ Paddle right(court.right - PADDLE_W, court.top);
 // Game variables
 bool start = false;
 bool game_over = true;
+bool button = false;
 
 const int strSize = 2;
 int score_left;
@@ -135,7 +137,7 @@ void loop() {
 			if(check_collision(ball, left) || check_collision(ball, right)){
 				ball.speedX *= -1;
 			}
-		} else if(score_left < MAX_SCORE && score_left < MAX_SCORE){
+		} else if(score_left < MAX_SCORE && score_right < MAX_SCORE){
 			// NEW ROUND: RESET BALL
 			TFTscreen.fillRect(ball.posX, ball.posY, BALL_W, BALL_H, COLOR_BLACK);
 			ball.posX = CENTER_X;
@@ -154,6 +156,8 @@ void loop() {
 			game_over = false;
 		} else if(game_over && digitalRead(PIN_START)){
 			start = true;
+		//} else {
+		//	button = ;
 		}
 	}
 }
