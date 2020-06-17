@@ -1,7 +1,7 @@
 
 // Ejercicio: Crear segunda paleta
 
-#include "common.h"
+#include "../common.h"
 
 #include "images.h"
 #include "ball.h"

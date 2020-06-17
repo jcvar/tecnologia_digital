@@ -36,9 +36,10 @@ Paddle left(court.left, court.top);
 Paddle right(court.right - PADDLE_W, court.top);
 
 bool check_collision(Ball b, Paddle p){
-	if(p.posX < b.posX + b.w && p.posX + p.w > b.posX){
-		return true;
-	} else if (p.posY < b.posY + b.h && p.posX + p.h > b.posX){
+	if(p.posX <= b.posX + b.w &&
+		p.posX + p.w >= b.posX &&
+		p.posY <= b.posY + b.h &&
+		p.posX + p.h >= b.posX){
 		return true;
 	}
 	return false;
