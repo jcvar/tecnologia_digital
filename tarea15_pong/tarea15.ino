@@ -1,15 +1,21 @@
 /*
-Tarea 00
-Title
+Tarea 15
+Pong
 
 Juan Camilo Vargas Q.
 Sergio Alejandro Vargas Q.
 
 Tecnologia Digital
 Universidad Nacional de Colombia
-2020-00-00
+2020-06-17
 */
 #include "../common.h"
+
+#include "images.h"
+#include "paddle.h"
+#include "ball.h"
+
+
 
 TFT TFTscreen = TFT(CS, DC, RST);
 
