@@ -17,7 +17,7 @@ class Paddle{
 			TFTscr.fillRect(posX, oldY, w, h, COLOR_BLACK);
 			for (int row=0; row<h; row++) {
 				for (int col=0; col<w; col++) {
-					word p=pgm_read_word(paddle_a + row*w + col);
+					word p=pgm_read_word(tennis_paddle + row*w + col);
 					TFTscr.drawPixel(col+posX, row+posY, p);
 				}
 			}
