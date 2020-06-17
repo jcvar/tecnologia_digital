@@ -12,11 +12,17 @@ Universidad Nacional de Colombia
 #include "../common.h"
 
 TFT TFTscreen = TFT(CS, DC, RST);
+court_t court;
 
 void setup() {
 	// Initialize screen
 	TFTscreen.begin();
-	TFTscreen.background(0, 0, 0);
+	TFTscreen.background(COLOR_BLACK);
+	// Court initialization
+	court.top = COURT_Y;
+	court.bottom = COURT_Y + COURT_H;
+	court.left = COURT_X;
+	court.right = COURT_X + COURT_W;
 	// Draw court
 	TFTscreen.drawRect(COURT_X, COURT_Y, COURT_W, COURT_H, COLOR_RED);
 }
