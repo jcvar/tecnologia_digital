@@ -5,12 +5,10 @@ class Paddle{
 	int posX;
 	int posY;
 	int oldY;
-	int speedY;
 	
-	Paddle(int t_posX, int t_posY, int t_speedY){
+	Paddle(int t_posX, int t_posY){
 		posX=t_posX;
 		posY=t_posY;
-		speedY=t_speedY;
 		oldY=posY;	
 	}
 
