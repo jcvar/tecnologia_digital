@@ -12,22 +12,21 @@ class Paddle{
 		oldY=posY;	
 	}
 
-	void draw(){
+	void draw(TFT TFTscr){
 		if (oldY != posY) {
-			TFTscreen.fillRect(posX, oldY, w, h, COLOR_BLACK);
+			TFTscr.fillRect(posX, oldY, w, h, COLOR_BLACK);
 			for (int row=0; row<h; row++) {
 				for (int col=0; col<w; col++) {
 					word p=pgm_read_word(paddle_a + row*w + col);
-					TFTscreen.drawPixel(col+posX, row+posY, p);
+					TFTscr.drawPixel(col+posX, row+posY, p);
 				}
 			}
 		}
 	}	// draw()
 	
 	void move(int t_posY){
-		posY=t_posY;
-		draw();
 		oldY=posY;		
+		posY=t_posY;
 	}	// move()
 
 };	// class Paddle

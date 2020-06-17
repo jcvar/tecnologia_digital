@@ -20,34 +20,34 @@ class Ball {
 		previousMillis=0;	
 	}
 	
-	void draw(){
+	void draw(TFT TFTscr){
 		if (posX != oldX || posY != oldY){
-			TFTscreen.fillRect(oldX, oldY, w, h, COLOR_BLACK);
+			TFTscr.fillRect(oldX, oldY, w, h, COLOR_BLACK);
 			for (int row = 0; row < h; row++) {
 				for (int col = 0; col < w; col++) {
 					word p = pgm_read_word(ballImage + row*w + col);
-					TFTscreen.drawPixel(col+posX, row+posY, p);
+					TFTscr.drawPixel(col+posX, row+posY, p);
 				}
 			}
 		}
 	} // draw()
 	
-	int move(){	// Return -1 or 1 for goal on left or right ends, else 0
-		if (posX <= court.left)  {
+	int move(court_t crt){	// Return -1 or 1 for goal on left or right ends, else 0
+		oldX = posX; 
+		oldY = posY;
+
+		if (posX <= crt.left)  {
 			return -1;
-		} else if (posX >= court.right - w) {
+		} else if (posX >= crt.right - w) {
 			return 1;
 		}
 		
-		if (posY <= court.top || posY >= court.bottom - h) {
+		if (posY <= crt.top || posY >= crt.bottom - h) {
 			speedY = -speedY;
 		}
 		
 		posX += speedX;
 		posY += speedY;
-		draw();
-		oldX = posX; 
-		oldY = posY;
 		
 		return 0;
 	} // move()
