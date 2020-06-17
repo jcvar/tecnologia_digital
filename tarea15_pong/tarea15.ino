@@ -11,6 +11,7 @@ Universidad Nacional de Colombia
 */
 #include "../common.h"
 #include "images.h"
+#include "tennis_ball.h"
 #include "paddle.h"
 #include "ball.h"
 
