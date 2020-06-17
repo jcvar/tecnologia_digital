@@ -39,7 +39,7 @@ class Ball {
 			return 1;
 		}
 
-		if (posY <= COURT_Y || posY >= COURT_Y + COURT_H) {
+		if (posY <= COURT_Y || posY >= COURT_Y + COURT_H - h) {
 			speedY = -speedY;
 		}
 
