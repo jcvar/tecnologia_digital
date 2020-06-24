@@ -9,7 +9,7 @@ Tecnologia Digital
 Universidad Nacional de Colombia
 2020-06-17
 */
-#include "../common.h"
+#include "common.h"
 //#include "images.h"
 #include "tennis_paddle.h"
 #include "tennis_ball.h"
@@ -161,4 +161,3 @@ void loop() {
 		}
 	}
 }
-

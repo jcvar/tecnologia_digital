@@ -9,7 +9,7 @@ Tecnologia Digital
 Universidad Nacional de Colombia
 2020-06-24
 */
-#include "../common.h"
+#include "common.h"
 #include "digits_small.h"
 
 #define MILLIS_MINUTE  100 // 60000
@@ -113,4 +113,3 @@ int get_digit_pos(digit_t dt) {
 	}
 	return x;
 }
-
