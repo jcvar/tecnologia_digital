@@ -11,8 +11,17 @@ Universidad Nacional de Colombia
 */
 #include "../common.h"
 
+#define MINUTE  100 // 60000
 #define DIGIT_W 32
-#define DIGIT_H 40
+#define DIGIT_H 48
+
+#define DIGIT_OFFSET 8
+#define MEM_OFFSET 1536
+// FIXME
+#define INIT_X 20
+#define INIT_Y 60
+
+
 
 typedef unsigned short hu // shorthand
 
@@ -21,7 +30,6 @@ court_t court;
 
 hu clock_hour = 0;
 hu clock_minute = 0;
-unsigned long curMillis;
 
 typedef enum {hour_units, hour_tens, minute_units, minute_tens} digit_t;
 
@@ -39,24 +47,25 @@ void setup() {
 }
 
 void loop() {
-	update_time(&clock_hour, &clock_minute);
-	draw_time(clock_hour, clock_minute);
+	static unsigned long clock_millis = 0;
+	if (millis() - clock_millis > MINUTE) {
+		clock_millis = millis();
+		update_time(&clock_hour, &clock_minute);
+		draw_time(clock_hour, clock_minute);
+	}
 }
 
-// update_time: Borrow hour and minute, increase 1 minute
 void update_time(hu *hour, hu *minute) {
-	*minute++;          // Update minute
+	*minute++;					// Update minute
 	if (*minute == 60) {
 		*minute = 0;
-		*hour++;          // Update hour
+		*hour++;					// Update hour
 		if (*hour == 24) {
 			*hour = 0;
 		}
 	}
 }
 
-
-// draw_time: Copies hour and minute
 void draw_time(hu hour, hu minute) {
 	draw_digit(minute % 10, minute_units);
 	if (minute % 10 == 0) {
@@ -70,21 +79,32 @@ void draw_time(hu hour, hu minute) {
 	}
 }
 
-void draw_digit(hu digit, digit_t dt) {
-	int x;
+void draw_digit(hu digit, digit_t digt) {
+	int posX = get_digit_pos(digt);
+	int offset = digit * MEM_OFFSET;
+	for (int row = 0; row < DIGIT_H; row++) {
+		for (int col = 0; col < DIGIT_W; col++) {
+			word p = pgm_read_word(digits + offset + (row*DIGIT_W + col));
+			TFTscreen.draw_pixel(col + posX, row + INIT_Y, p);
+		}
+	}
+}
+
+int get_digit_pos(digit_t dt) {
+	int x = INIT_X;
 	switch(dt) {
 		case minute_units:
-			x = offset + DIGIT_W*4;
+			x += (DIGIT_W+DIGIT_OFFSET)*4;
 			break;
 		case minute_tens:
-			x = 
+			x += (DIGIT_W+DIGIT_OFFSET)*3;
 			break;
 		case hour_units:
-			x = 
+			x += (DIGIT_W+DIGIT_OFFSET);
 			break;
 		case hour_tens:
-			x = 
 			break;
 	}
+	return x;
 }
 
