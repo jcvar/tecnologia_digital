@@ -25,23 +25,23 @@ class Mario {
 			{
 				for (int col=0; col<w; col++) 
 				{
-					//word p;
+					word p;
 					switch(index)
 					{
 						case 0:
-							word p=pgm_read_word(m0 + buffidx);
+							 p=pgm_read_word(m0 + buffidx);
 							TFTscreen.drawPixel(col+posX,row+posY,p);
 							break;
 						case 1:
-							word p=pgm_read_word(m1 + buffidx);
+							 p=pgm_read_word(m1 + buffidx);
 							TFTscreen.drawPixel(col+posX,row+posY,p);
 							break;  
 						case 2:
-							word p=pgm_read_word(m2 + buffidx);
+							 p=pgm_read_word(m2 + buffidx);
 							TFTscreen.drawPixel(col+posX,row+posY,p);
 							break;      
 						case 3:
-							word p=pgm_read_word(m3 + buffidx);
+							 p=pgm_read_word(m3 + buffidx);
 							TFTscreen.drawPixel(col+posX,row+posY,p);
 							break;
 					}   

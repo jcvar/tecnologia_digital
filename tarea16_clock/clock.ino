@@ -10,28 +10,32 @@ Universidad Nacional de Colombia
 2020-06-24
 */
 #include "../common.h"
+#include "digits_small.h"
 
-#define MINUTE  100 // 60000
-#define DIGIT_W 32
-#define DIGIT_H 48
+#define MILLIS_MINUTE  100 // 60000
+#define DIGIT_W 16
+#define DIGIT_H 24
 
-#define DIGIT_OFFSET 8
-#define MEM_OFFSET 1536
+#define DIGIT_OFFSET 4
+#define MEM_OFFSET 384
 // FIXME
-#define INIT_X 20
-#define INIT_Y 60
+#define INIT_X 30
+#define INIT_Y 51
 
-
-
-typedef unsigned short hu // shorthand
+typedef unsigned short hu; // shorthand
 
 TFT TFTscreen = TFT(CS, DC, RST);
 court_t court;
 
-hu clock_hour = 0;
-hu clock_minute = 0;
+hu hour = 0;
+hu minute = 0;
 
-typedef enum {hour_units, hour_tens, minute_units, minute_tens} digit_t;
+typedef enum {	hour_units, hour_tens, minute_units, minute_tens} digit_t;
+
+void update_time();//(hu*, hu*);
+void draw_time(hu, hu);
+void draw_digit(hu, digit_t);
+int get_digit_pos(digit_t);
 
 void setup() {
 	// Initialize screen
@@ -44,24 +48,26 @@ void setup() {
 	//court.right = COURT_X + COURT_W;
 	// Draw court
 	//TFTscreen.drawRect(COURT_X, COURT_Y, COURT_W, COURT_H, COLOR_RED);
+	draw_time(0, 0);
+	delay(100);
 }
 
 void loop() {
 	static unsigned long clock_millis = 0;
-	if (millis() - clock_millis > MINUTE) {
+	if (millis() - clock_millis > MILLIS_MINUTE) {
 		clock_millis = millis();
-		update_time(&clock_hour, &clock_minute);
-		draw_time(clock_hour, clock_minute);
+		update_time();//(hour, minute);
+		draw_time(hour, minute);
 	}
 }
 
-void update_time(hu *hour, hu *minute) {
-	*minute++;					// Update minute
-	if (*minute == 60) {
-		*minute = 0;
-		*hour++;					// Update hour
-		if (*hour == 24) {
-			*hour = 0;
+void update_time(){	//(hu *hour, hu *minute) {
+	minute++;					// Update minute
+	if (minute == 60) {
+		minute = 0;
+		hour++;					// Update hour
+		if (hour == 24) {
+			hour = 0;
 		}
 	}
 }
@@ -85,7 +91,7 @@ void draw_digit(hu digit, digit_t digt) {
 	for (int row = 0; row < DIGIT_H; row++) {
 		for (int col = 0; col < DIGIT_W; col++) {
 			word p = pgm_read_word(digits + offset + (row*DIGIT_W + col));
-			TFTscreen.draw_pixel(col + posX, row + INIT_Y, p);
+			TFTscreen.drawPixel(col + posX, row + INIT_Y, p);
 		}
 	}
 }
