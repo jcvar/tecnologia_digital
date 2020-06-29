@@ -61,29 +61,25 @@ int check_ranges(int dy) {
 		return -1;
 	} else if (dy < 14) {
 		return 1;
-	} else { // if (dy < 20) {
+	} else {	// if (dy < 20) {
 		return 2;
 	}
 }
 
 /* check_collision: returns the new speed of the ball */
 int check_collision(Ball b, Paddle p){
-		//check y axis
-		if (b.posY < p.posY + p.h && b.posY + b.h > p.posY) {
-			// Check ball direction
-			if (b.speedX > 0 && b.posX + b.w >= p.posX) {
-				// ball collides on the left side of the paddle
-				return check_ranges(b.posY - p.posY);
-			} else if (b.speedX < 0 && b.posX <= p.posX + p.w) {
-				// ball collides on the right side of the paddle
-				return check_ranges(b.posY - p.posY);
-			}
+	if (b.posY < p.posY + p.h && b.posY + b.h > p.posY) { // Check y-axis
+		if (b.speedX > 0 && b.posX + b.w >= p.posX) { // ball collides on the left side of the paddle
+			return check_ranges(b.posY - p.posY);
+		} else if (b.speedX < 0 && b.posX <= p.posX + p.w) { // ball collides on the right side of the paddle
+			return check_ranges(b.posY - p.posY);
 		}
-		return 0; // no collision
+	}
+	return 0; // no collision
 }
 
 bool update_score(int result){
-	if(result == -1){ // Goal on left side
+	if(result == -1){	// Goal on left side
 		score_right += 1;
 		TFTscreen.stroke(COLOR_BLACK);
 		TFTscreen.text(score_str_right, 114, 4); // Must erase previous score
@@ -91,7 +87,7 @@ bool update_score(int result){
 		TFTscreen.stroke(COLOR_WHITE);
 		TFTscreen.text(score_str_right, 114, 4);
 		return true;
-	} else if(result == 1){ // Goal on right side
+	} else if(result == 1){	// Goal on right side
 		score_left += 1;
 		TFTscreen.stroke(COLOR_BLACK);
 		TFTscreen.text(score_str_left, 40, 4); // Must erase previous score
@@ -112,11 +108,11 @@ void reset_score(){
 
 void setup() {
 	// Initialize screen
-	TFTscreen.begin();
+	TFTscreen.begin(INITR_BLACKTAB); //);
 	TFTscreen.background(COLOR_BLACK);
 	// Draw court
 	TFTscreen.drawRect(COURT_X, COURT_Y + 5, COURT_W, COURT_H, COLOR_RED);
-
+	
 	TFTscreen.stroke(COLOR_WHITE);
 	TFTscreen.text("PONG", 68, 4);
 	reset_score();
@@ -140,18 +136,18 @@ void loop() {
 	
 	if(millis() - millis_ball > MILLIS_BALL){
 		millis_ball = millis();
-
+		
 		if(!game_over){
 			// RUN GAME LOGIC
 			ball.move(court);
 			ball.draw(TFTscreen);
 			game_over = update_score(ball.check_goal(court));
-
+			
 			static int new_speed = 0;
 			if (ball.speedX > 0) {
-				new_speed = check_collision(ball, left);
-			} else if (ball.speedX > 0) {
 				new_speed = check_collision(ball, right);
+			} else if (ball.speedX < 0) {
+				new_speed = check_collision(ball, left);
 			}
 			if (new_speed != 0) {
 				ball.speedY += new_speed;
@@ -179,8 +175,8 @@ void loop() {
 			game_over = false;
 		} else if(game_over && digitalRead(PIN_START)){
 			start = true;
-		//} else {
-		//	button = ;
+			//} else {
+			//	button = ;
 		}
 	}
 }
