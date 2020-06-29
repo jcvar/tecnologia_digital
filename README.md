@@ -16,11 +16,11 @@ Ejemplos y tareas del curso de Tecnología Digital, una electiva sobre fundament
 
 | pin | name | Arduino |
 |-----|------|---------|
-| 1   |  rst | 13      |
-| 2   |  cs  | 11      |
-| 3   |  dc  | 9       |
-| 4   |  din | 10      |
-| 5   |  clk | 8       |
-| 6   |  vcc | 5v      |
-| 7   |  bl  | 5v      |
-| 8   |  gnd | gnd     |
+| 1   |  RST | 8       |
+| 2   |  CS  | 10      |
+| 3   |  DC  | 9       |
+| 4   |  DIN | 11      |
+| 5   |  CLK | 13      |
+| 6   |  VCC | 5V      |
+| 7   |  BL  | 5V      |
+| 8   |  GND | GND     |
