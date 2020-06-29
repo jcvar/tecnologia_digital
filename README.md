@@ -12,3 +12,15 @@ Universidad Nacional de Colombia\
 
 Ejemplos y tareas del curso de Tecnología Digital, una electiva sobre fundamentos de sistemas embebidos desarrollada usando la plataforma Arduino.
 
+## TFT pins
+
+| pin | name | Arduino |
+|-----|------|---------|
+| 1   |  rst | 13      |
+| 2   |  cs  | 11      |
+| 3   |  dc  | 9       |
+| 4   |  din | 10      |
+| 5   |  clk | 8       |
+| 6   |  vcc | 5v      |
+| 7   |  bl  | 5v      |
+| 8   |  gnd | gnd     |
