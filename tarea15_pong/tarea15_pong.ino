@@ -54,14 +54,32 @@ int score_right;
 char score_str_left[strSize] = {0};
 char score_str_right[strSize] = {0};
 
-bool check_collision(Ball b, Paddle p){
-	if(p.posX <= b.posX + b.w &&
-		p.posX + p.w >= b.posX &&
-	p.posY <= b.posY + b.h &&
-	p.posY + p.h >= b.posY){
-		return true;
+int check_ranges(int dy) {
+	if (dy < 2) {
+		return -2;
+	} else if (dy < 8) {
+		return -1;
+	} else if (dy < 14) {
+		return 1;
+	} else { // if (dy < 20) {
+		return 2;
 	}
-	return false;
+}
+
+/* check_collision: returns the new speed of the ball */
+int check_collision(Ball b, Paddle p){
+		//check y axis
+		if (b.posY < p.posY + p.h && b.posY + b.h > p.posY) {
+			// Check ball direction
+			if (b.speedX > 0 && b.posX + b.w >= p.posX) {
+				// ball collides on the left side of the paddle
+				return check_ranges(b.posY - p.posY);
+			} else if (b.speedX < 0 && b.posX <= p.posX + p.w) {
+				// ball collides on the right side of the paddle
+				return check_ranges(b.posY - p.posY);
+			}
+		}
+		return 0; // no collision
 }
 
 bool update_score(int result){
