@@ -85,23 +85,17 @@ int check_collision(Ball b, Paddle p){
 bool update_score(int result){
 	if(result == -1){ // Goal on left side
 		score_right += 1;
-
 		TFTscreen.stroke(COLOR_BLACK);
 		TFTscreen.text(score_str_right, 114, 4); // Must erase previous score
-
 		score_str_right[0] = '0' + score_right;
-
 		TFTscreen.stroke(COLOR_WHITE);
 		TFTscreen.text(score_str_right, 114, 4);
 		return true;
 	} else if(result == 1){ // Goal on right side
 		score_left += 1;
-
 		TFTscreen.stroke(COLOR_BLACK);
 		TFTscreen.text(score_str_left, 40, 4); // Must erase previous score
-
 		score_str_left[0] = '0' + score_left;
-
 		TFTscreen.stroke(COLOR_WHITE);
 		TFTscreen.text(score_str_left, 40, 4);
 		return true;
@@ -152,9 +146,20 @@ void loop() {
 			ball.move(court);
 			ball.draw(TFTscreen);
 			game_over = update_score(ball.check_goal(court));
-			if(check_collision(ball, left) || check_collision(ball, right)){
+
+			static int new_speed = 0;
+			if (ball.speedX > 0) {
+				new_speed = check_collision(ball, left);
+			} else if (ball.speedX > 0) {
+				new_speed = check_collision(ball, right);
+			}
+			if (new_speed != 0) {
+				ball.speedY += new_speed;
 				ball.speedX *= -1;
 			}
+			//if((new_speed = check_collision(ball, left))) {
+			//	ball.speedY = new_speed;
+			//}
 		} else if(score_left < MAX_SCORE && score_right < MAX_SCORE){
 			// NEW ROUND: RESET BALL
 			TFTscreen.fillRect(ball.posX, ball.posY, BALL_W, BALL_H, COLOR_BLACK);
