@@ -1,3 +1,4 @@
+// Time struct for clock and alarm
 typedef struct {
   unsigned hour;
   unsigned minute;
@@ -5,7 +6,7 @@ typedef struct {
   bool active;
 } time_t;
 
-// Enum for global clock states
+// Enum for global clock states (modes)
 typedef enum {
   set_normal,
   set_alarm_active,
