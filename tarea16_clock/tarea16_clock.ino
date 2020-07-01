@@ -18,16 +18,10 @@
 
 #define MILLIS_LOOP 200
 
-// Drawing defines
-#define INIT_X 10
-#define INIT_Y 51
-#define DIGIT_W 16
-#define DIGIT_H 24
-#define DIGIT_OFFSET 4
-#define MEM_OFFSET 384 // W*H
+
 
 court_t court = {COURT_Y, COURT_Y + COURT_H, COURT_X, COURT_X + COURT_W};
-TFT TFTscreen = TFT(CS, DC, RST);
+
 Button mode_button(4); // Cycle through state_t modes
 Button next_button(5); // Cycle through time values in each state_t
 
@@ -42,14 +36,7 @@ time_t alarm = {0, 0, 0, false};
 void timer1_isr();
 // Main clock logic
 void update_time();//(unsigned*, unsigned*);
-// Redraw time values if changed
-void draw_time(time_t);
-// Draw all digits
-void force_draw(time_t);
-// Access selected digit image and draw at digit_t
-void draw_digit(unsigned, digit_t);
-// Get the x-axis coordinate for a given digit
-int get_digit_pos(digit_t);
+
 
 void setup() {
   TFTscreen.begin(INITR_BLACKTAB); // INITR_BLACKTAB for BGR
@@ -86,12 +73,17 @@ void loop() {
 } // END LOOP
 
 void timer1_isr() {
-  clk.half = !clk.half;
-  if (clk.half) {
+  clk.active = !clk.active;
+  if (clk.active) {
     update_time();
-    draw_time(clk);
+    if (clk_mode != set_alarm_active &&
+        clk_mode != set_alarm_hour &&
+        clk_mode != set_alarm_minute) {
+      draw_time(clk);
+    }
   }
 }
+
 
 void update_mode() {
   switch (clk_mode) {
@@ -102,15 +94,15 @@ void update_mode() {
       clk_mode = set_alarm_hour;
       break;
     case set_alarm_hour:
-      clk_mode = set_alarm_min;
+      clk_mode = set_alarm_minute;
       break;
-    case set_alarm_min:
+    case set_alarm_minute:
       clk_mode = set_hour;
       break;
     case set_hour:
-      clk_mode = set_min;
+      clk_mode = set_minute;
       break;
-    case set_min:
+    case set_minute:
       clk_mode = set_sec;
       break;
     case set_sec:
@@ -129,18 +121,18 @@ void update_next(state_t mode) {
       // DO NOTHING
       break;
     case set_alarm_active:
-      alarm.half = !alarm.half;
+      alarm.active = !alarm.active;
       break;
     case set_alarm_hour:
       alarm.hour = (alarm.hour + 1) % 24;
       break;
-    case set_alarm_min:
+    case set_alarm_minute:
       alarm.minute = (alarm.minute + 1) % 60;
       break;
     case set_hour:
       clk.hour = (clk.hour + 1) % 24;
       break;
-    case set_min:
+    case set_minute:
       clk.minute = (clk.minute + 1) % 60;
       break;
     case set_sec:

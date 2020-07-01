@@ -11,9 +11,9 @@ typedef enum {
   set_normal,
   set_alarm_active,
   set_alarm_hour,
-  set_alarm_min,
+  set_alarm_minute,
   set_hour,
-  set_min,
+  set_minute,
   set_sec,
 } state_t;
 
