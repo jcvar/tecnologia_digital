@@ -24,8 +24,6 @@
 #define DIGIT_OFFSET 4
 #define MEM_OFFSET 384 // W*H
 
-typedef unsigned short hu; // shorthand
-
 // Enum for global clock states
 typedef enum {
   normal,
@@ -48,51 +46,52 @@ typedef enum {
 } digit_t;
 
 
-court_t court;
+court_t court = {COURT_Y, COURT_Y + COURT_H, COURT_X, COURT_X + COURT_W};
 TFT TFTscreen = TFT(CS, DC, RST);
 Button mode_button(4); // Cycle through state_t modes
 Button next_button(5); // Cycle through time values in each state_t
 
 // Sketch globals
-hu hour = 0;
-hu minute = 0;
-hu second = 0;
-state_t state = normal;
+unsigned hour = 0;
+unsigned minute = 0;
+unsigned second = 0;
+bool half = true;
+state_t mode = normal;
 
-void update_time();//(hu*, hu*);
-void draw_time(hu, hu);
-void draw_digit(hu, digit_t);
+
+/* DOCS */
+// Main clock logic
+void update_time();//(unsigned*, unsigned*);
+// Redraw time values if changed
+void draw_time(unsigned, unsigned, unsigned);
+// Draw all digits
+void force_draw(unsigned, unsigned, unsigned);
+// Access selected digit image and draw at digit_t
+void draw_digit(unsigned, digit_t);
+// Get the x-axis coordinate for a given digit
 int get_digit_pos(digit_t);
 
 void setup() {
-  // Initialize screen
-  TFTscreen.begin(INITR_BLACKTAB);
+  TFTscreen.begin(INITR_BLACKTAB); // INITR_BLACKTAB for BGR
   TFTscreen.background(COLOR_BLACK);
-
-  // Court initialization
-  court.top = COURT_Y;
-  court.bottom = COURT_Y + COURT_H;
-  court.left = COURT_X;
-  court.right = COURT_X + COURT_W;
-  // Draw court
   TFTscreen.drawRect(COURT_X, COURT_Y, COURT_W, COURT_H, COLOR_RED);
 
-
+  // External inits
   Timer1.initialize(500000);//timing for 500ms
-  Timer1.attachInterrupt(update_time);//declare the interrupt serve routine:TimingISR
+  Timer1.attachInterrupt(timer1_isr);//declare the interrupt serve routine:TimingISR
+  mode_button.begin();
+  next_button.begin();
 
-  enterButton.begin();
-  selectButton.begin();
-
-  force_draw(hour, minute);
+  force_draw(hour, minute, second);
 } // END SETUP
 
 void loop() {
   static unsigned long clock_millis = 0;
 
-  enterButton.read();
-  selectButton.read();
+  //enterButton.read();
+  //selectButton.read();
 
+  /*
   if (millis() - clock_millis > MILLIS_MINUTE) {
     if (enterButton.wasPressed()) {
       hour = (hour + 1) % 24;
@@ -106,15 +105,20 @@ void loop() {
     //  	update_time();//(hour, minute);
     //  	draw_time(hour, minute);
   }
-
+*/
 
 } // END LOOP
 
-void set_time() {
+void timer1_isr() {
+  half = !half;
+
+  if (half) {
+    update_time();
+  }
 
 }
 
-void update_time() {	//(hu *hour, hu *minute) {
+void update_time() {	//(unsigned *hour, unsigned *minute) {
   second++;
   if (second == 60) {
     second = 0;
@@ -127,31 +131,38 @@ void update_time() {	//(hu *hour, hu *minute) {
       }
     }
   }
-  draw_time(hour, minute);
+  draw_time(hour, minute, second);
 }
 
-void force_draw(hu hour, hu minute) {
+void force_draw(unsigned hour, unsigned minute, unsigned second) {
+  draw_digit(second % 10, second_units);
+  draw_digit(second / 10, second_tens);
   draw_digit(minute % 10, minute_units);
   draw_digit(minute / 10, minute_tens);
   draw_digit(hour % 10, hour_units);
   draw_digit(hour / 10, hour_tens);
 }
 
-void draw_time(hu hour, hu minute) {
-  draw_digit(minute % 10, minute_units);
-  if (minute % 10 == 0) {
-    draw_digit(minute / 10, minute_tens);
-    if (minute / 10 == 0) {
-      draw_digit(hour % 10, hour_units);
-      if (hour % 10 == 0) {
-        draw_digit(hour / 10, hour_tens);
+void draw_time(unsigned hour, unsigned minute, unsigned second) {
+  draw_digit(second % 10, second_units);
+  if (second % 10 == 0) {
+    draw_digit(second / 10, second_tens);
+    if (second / 10 == 0) {
+      draw_digit(minute % 10, minute_units);
+      if (minute % 10 == 0) {
+        draw_digit(minute / 10, minute_tens);
+        if (minute / 10 == 0) {
+          draw_digit(hour % 10, hour_units);
+          if (hour % 10 == 0) {
+            draw_digit(hour / 10, hour_tens);
+          }
+        }
       }
     }
   }
 }
 
-// Draw a digit
-void draw_digit(hu digit, digit_t digt) {
+void draw_digit(unsigned digit, digit_t digt) {
   int posX = get_digit_pos(digt);
   int offset = digit * MEM_OFFSET;
   for (int row = 0; row < DIGIT_H; row++) {
@@ -162,21 +173,27 @@ void draw_digit(hu digit, digit_t digt) {
   }
 }
 
-// Get the x-axis coordinate for a given digit
 int get_digit_pos(digit_t dt) {
-  int x = INIT_X;
+  int x = DIGIT_W + DIGIT_OFFSET;
   switch (dt) {
-    case minute_units:
-      x += (DIGIT_W + DIGIT_OFFSET) * 4;
-      break;
-    case minute_tens:
-      x += (DIGIT_W + DIGIT_OFFSET) * 3;
+    case hour_tens:
+      x *= 0;
       break;
     case hour_units:
-      x += (DIGIT_W + DIGIT_OFFSET);
+      x *= 1;
       break;
-    case hour_tens:
+    case minute_tens:
+      x *= 2;
+      break;
+    case minute_units:
+      x *= 3;
+      break;
+    case second_tens:
+      x *= 4;
+      break;
+    case second_units:
+      x *= 5;
       break;
   }
-  return x;
+  return x + INIT_X;
 }
