@@ -2,7 +2,7 @@ typedef struct {
   unsigned hour;
   unsigned minute;
   unsigned second;
-  bool half; // General purpose bool
+  bool active;
 } time_t;
 
 // Enum for global clock states
