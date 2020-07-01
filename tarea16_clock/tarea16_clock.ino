@@ -11,6 +11,7 @@
 */
 #include "common.h"
 #include "digits_small.h"
+#include "clock.h"
 #include <JC_Button.h>
 #include <TimerOne.h>
 
@@ -24,42 +25,15 @@
 #define DIGIT_OFFSET 4
 #define MEM_OFFSET 384 // W*H
 
-// Enum for global clock states
-typedef enum {
-  set_normal,
-  set_alarm_active,
-  set_alarm_hour,
-  set_alarm_min,
-  set_hour,
-  set_min,
-  set_sec,
-} state_t;
-
-// Enum to select digit position
-typedef enum {
-  hour_tens,
-  hour_units,
-  minute_tens,
-  minute_units,
-  second_tens,
-  second_units
-} digit_t;
-
-
 court_t court = {COURT_Y, COURT_Y + COURT_H, COURT_X, COURT_X + COURT_W};
 TFT TFTscreen = TFT(CS, DC, RST);
 Button mode_button(4); // Cycle through state_t modes
 Button next_button(5); // Cycle through time values in each state_t
 
 // Sketch globals
-unsigned clk_hour = 0;
-unsigned clk_minute = 0;
-unsigned clk_second = 0;
-bool clk_half = true;
-bool clk_alarm = false;
-unsigned clk_alarm_hour = 0;
-unsigned clk_alarm_minute = 0;
-state_t clk_mode = normal;
+state_t clk_mode = set_normal;
+time_t clk = {0, 0, 0, true};
+time_t alarm = {0, 0, 0, false};
 
 
 /* DOCS */
@@ -68,9 +42,9 @@ void timer1_isr();
 // Main clock logic
 void update_time();//(unsigned*, unsigned*);
 // Redraw time values if changed
-void draw_time(unsigned, unsigned, unsigned);
+void draw_time(time_t);
 // Draw all digits
-void force_draw(unsigned, unsigned, unsigned);
+void force_draw(time_t);
 // Access selected digit image and draw at digit_t
 void draw_digit(unsigned, digit_t);
 // Get the x-axis coordinate for a given digit
@@ -87,7 +61,7 @@ void setup() {
   mode_button.begin();
   next_button.begin();
 
-  force_draw(clk_hour, clk_minute, clk_second);
+  force_draw(clk);
 } // END SETUP
 
 void loop() {
@@ -111,13 +85,11 @@ void loop() {
 } // END LOOP
 
 void timer1_isr() {
-  clk_half = !clk_half;
-
-  if (clk_half) {
+  clk.half = !clk.half;
+  if (clk.half) {
     update_time();
-    draw_time(clk_hour, clk_minute, clk_second);
+    draw_time(clk);
   }
-
 }
 
 void update_mode() {
@@ -144,7 +116,7 @@ void update_mode() {
       clk_mode = set_normal;
       break;
     default:
-      clk_mode = normal;
+      clk_mode = set_normal;
       break;
 
   }
@@ -156,63 +128,64 @@ void update_next(state_t mode) {
       // DO NOTHING
       break;
     case set_alarm_active:
-      clk_alarm = !clk_alarm;
+      alarm.half = !alarm.half;
       break;
     case set_alarm_hour:
-      clk_alarm_hour = (clk_alarm_hour + 1) % 24;
+      alarm.hour = (alarm.hour + 1) % 24;
       break;
     case set_alarm_min:
-      clk_alarm_min = (clk_alarm_min + 1) % 60;
+      alarm.minute = (alarm.minute + 1) % 60;
       break;
     case set_hour:
-      clk_hour = (clk_hour + 1) % 24;
+      clk.hour = (clk.hour + 1) % 24;
       break;
     case set_min:
-      clk_minute = (clk_minute + 1) % 60;
+      clk.minute = (clk.minute + 1) % 60;
       break;
     case set_sec:
-      clk_second = 0;
+      clk.second = 0;
       break;
   }
 }
 
 
 void update_time() {
-  clk_second++;
-  if (clk_second == 60) {
-    clk_second = 0;
-    clk_minute++;					// Update minute
-    if (clk_minute == 60) {
-      clk_minute = 0;
-      clk_hour++;					// Update hour
-      if (clk_hour == 24) {
-        clk_hour = 0;
+  clk.second++;
+  if (clk.second == 60) {
+    clk.second = 0;
+    clk.minute++;					// Update minute
+    if (clk.minute == 60) {
+      clk.minute = 0;
+      clk.hour++;					// Update hour
+      if (clk.hour == 24) {
+        clk.hour = 0;
       }
     }
   }
 }
 
-void force_draw(unsigned hour, unsigned minute, unsigned second) {
-  draw_digit(second % 10, second_units);
-  draw_digit(second / 10, second_tens);
-  draw_digit(minute % 10, minute_units);
-  draw_digit(minute / 10, minute_tens);
-  draw_digit(hour % 10, hour_units);
-  draw_digit(hour / 10, hour_tens);
+
+void force_draw(time_t t) {
+  draw_digit(t.second % 10, second_units);
+  draw_digit(t.second / 10, second_tens);
+  draw_digit(t.minute % 10, minute_units);
+  draw_digit(t.minute / 10, minute_tens);
+  draw_digit(t.hour % 10, hour_units);
+  draw_digit(t.hour / 10, hour_tens);
 }
 
-void draw_time(unsigned hour, unsigned minute, unsigned second) {
-  draw_digit(second % 10, second_units);
-  if (second % 10 == 0) {
-    draw_digit(second / 10, second_tens);
-    if (second / 10 == 0) {
-      draw_digit(minute % 10, minute_units);
-      if (minute % 10 == 0) {
-        draw_digit(minute / 10, minute_tens);
-        if (minute / 10 == 0) {
-          draw_digit(hour % 10, hour_units);
-          if (hour % 10 == 0) {
-            draw_digit(hour / 10, hour_tens);
+void draw_time(time_t t) {
+  draw_digit(t.second % 10, second_units);
+  if (t.second % 10 == 0) {
+    draw_digit(t.second / 10, second_tens);
+    if (t.second / 10 == 0) {
+      draw_digit(t.minute % 10, minute_units);
+      if (t.minute % 10 == 0) {
+        draw_digit(t.minute / 10, minute_tens);
+        if (t.minute / 10 == 0) {
+          draw_digit(t.hour % 10, hour_units);
+          if (t.hour % 10 == 0) {
+            draw_digit(t.hour / 10, hour_tens);
           }
         }
       }
