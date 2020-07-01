@@ -15,27 +15,49 @@
 #include <TimerOne.h>
 
 #define MILLIS_MINUTE  100 // 60000
-#define DIGIT_W 16
-#define DIGIT_H 24
 
-#define DIGIT_OFFSET 4
-#define MEM_OFFSET 384
+// Drawing defines
 #define INIT_X 30
 #define INIT_Y 51
+#define DIGIT_W 16
+#define DIGIT_H 24
+#define DIGIT_OFFSET 4
+#define MEM_OFFSET 384 // W*H
 
 typedef unsigned short hu; // shorthand
 
-TFT TFTscreen = TFT(CS, DC, RST);
+// Enum for global clock states
+typedef enum {
+  normal,
+  set_alarm_active,
+  set_alarm_hour,
+  set_alarm_min,
+  set_hour,
+  set_min,
+  set_sec,
+} state_t;
+
+// Enum to select digit position
+typedef enum {
+  hour_tens,
+  hour_units,
+  minute_tens,
+  minute_units,
+  second_tens,
+  second_units
+} digit_t;
+
+
 court_t court;
+TFT TFTscreen = TFT(CS, DC, RST);
+Button mode_button(4); // Cycle through state_t modes
+Button next_button(5); // Cycle through time values in each state_t
 
-Button selectButton(4);
-Button enterButton(5);
-
+// Sketch globals
 hu hour = 0;
 hu minute = 0;
 hu second = 0;
-
-typedef enum {	hour_units, hour_tens, minute_units, minute_tens} digit_t;
+state_t state = normal;
 
 void update_time();//(hu*, hu*);
 void draw_time(hu, hu);
@@ -128,6 +150,7 @@ void draw_time(hu hour, hu minute) {
   }
 }
 
+// Draw a digit
 void draw_digit(hu digit, digit_t digt) {
   int posX = get_digit_pos(digt);
   int offset = digit * MEM_OFFSET;
@@ -139,6 +162,7 @@ void draw_digit(hu digit, digit_t digt) {
   }
 }
 
+// Get the x-axis coordinate for a given digit
 int get_digit_pos(digit_t dt) {
   int x = INIT_X;
   switch (dt) {
