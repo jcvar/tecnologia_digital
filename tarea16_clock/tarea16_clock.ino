@@ -14,7 +14,7 @@
 #include <JC_Button.h>
 #include <TimerOne.h>
 
-#define MILLIS_MINUTE  100 // 60000
+#define MILLIS_LOOP 200
 
 // Drawing defines
 #define INIT_X 10
@@ -52,9 +52,9 @@ Button mode_button(4); // Cycle through state_t modes
 Button next_button(5); // Cycle through time values in each state_t
 
 // Sketch globals
-unsigned hour = 0;
-unsigned minute = 0;
-unsigned second = 0;
+unsigned clk_hour = 0;
+unsigned clk_minute = 0;
+unsigned clk_second = 0;
 bool half = true;
 state_t mode = normal;
 
@@ -82,30 +82,18 @@ void setup() {
   mode_button.begin();
   next_button.begin();
 
-  force_draw(hour, minute, second);
+  force_draw(clk_hour, clk_minute, clk_second);
 } // END SETUP
 
 void loop() {
-  static unsigned long clock_millis = 0;
+  static unsigned long loop_millis = 0;
 
-  //enterButton.read();
-  //selectButton.read();
+  mode_button.read();
+  next_button.read();
 
-  /*
-    if (millis() - clock_millis > MILLIS_MINUTE) {
-    if (enterButton.wasPressed()) {
-      hour = (hour + 1) % 24;
-      force_draw(hour, minute);
-    }
-    if (selectButton.wasPressed()) {
-      minute = (minute + 1) % 60;
-      force_draw(hour, minute);
-    }
-    //  	clock_millis = millis();
-    //  	update_time();//(hour, minute);
-    //  	draw_time(hour, minute);
-    }
-  */
+  if (millis() - loop_millis > MILLIS_LOOP) {
+    
+  }
 
 } // END LOOP
 
@@ -114,24 +102,24 @@ void timer1_isr() {
 
   if (half) {
     update_time();
+    draw_time(clk_hour, clk_minute, clk_second);
   }
 
 }
 
-void update_time() {	//(unsigned *hour, unsigned *minute) {
-  second++;
-  if (second == 60) {
-    second = 0;
-    minute++;					// Update minute
-    if (minute == 60) {
-      minute = 0;
-      hour++;					// Update hour
-      if (hour == 24) {
-        hour = 0;
+void update_time() {
+  clk_second++;
+  if (clk_second == 60) {
+    clk_second = 0;
+    clk_minute++;					// Update minute
+    if (clk_minute == 60) {
+      clk_minute = 0;
+      clk_hour++;					// Update hour
+      if (clk_hour == 24) {
+        clk_hour = 0;
       }
     }
   }
-  draw_time(hour, minute, second);
 }
 
 void force_draw(unsigned hour, unsigned minute, unsigned second) {
