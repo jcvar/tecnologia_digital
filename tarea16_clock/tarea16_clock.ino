@@ -17,7 +17,7 @@
 #define MILLIS_MINUTE  100 // 60000
 
 // Drawing defines
-#define INIT_X 30
+#define INIT_X 10
 #define INIT_Y 51
 #define DIGIT_W 16
 #define DIGIT_H 24
@@ -92,7 +92,7 @@ void loop() {
   //selectButton.read();
 
   /*
-  if (millis() - clock_millis > MILLIS_MINUTE) {
+    if (millis() - clock_millis > MILLIS_MINUTE) {
     if (enterButton.wasPressed()) {
       hour = (hour + 1) % 24;
       force_draw(hour, minute);
@@ -104,8 +104,8 @@ void loop() {
     //  	clock_millis = millis();
     //  	update_time();//(hour, minute);
     //  	draw_time(hour, minute);
-  }
-*/
+    }
+  */
 
 } // END LOOP
 
@@ -174,26 +174,22 @@ void draw_digit(unsigned digit, digit_t digt) {
 }
 
 int get_digit_pos(digit_t dt) {
-  int x = DIGIT_W + DIGIT_OFFSET;
+  static int space_x = DIGIT_W + DIGIT_OFFSET;
+  static int dots_x = DIGIT_W / 2 + DIGIT_OFFSET;
+  int x = 0;
   switch (dt) {
-    case hour_tens:
-      x *= 0;
-      break;
-    case hour_units:
-      x *= 1;
-      break;
-    case minute_tens:
-      x *= 2;
-      break;
-    case minute_units:
-      x *= 3;
-      break;
-    case second_tens:
-      x *= 4;
-      break;
     case second_units:
-      x *= 5;
-      break;
+      x += space_x;
+    case second_tens:
+      x += space_x + dots_x;
+    case minute_units:
+      x += space_x;
+    case minute_tens:
+      x += space_x + dots_x;
+    case hour_units:
+      x += space_x;
+    case hour_tens:
+      x += INIT_X;
   }
-  return x + INIT_X;
+  return x;
 }
