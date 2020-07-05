@@ -1,12 +1,15 @@
-// Time struct for clock and alarm
+// TODO: refactor
+// include another button and change the state_t enum
+
+// time_t: struct for clock's time and alarm
 typedef struct {
 	unsigned short hour;
 	unsigned short minute;
 	unsigned short second;
 	bool active;
-} time_t;
+} mytime_t;
 
-// Enum for global clock states (modes)
+// state_t: global clock states
 typedef enum {
 	set_normal,
 	set_alarm_active,
@@ -17,7 +20,7 @@ typedef enum {
 	set_sec,
 } state_t;
 
-// Enum to select digit position
+// digit_t: To select a digit's position
 typedef enum {
 	hour_tens,
 	hour_units,
