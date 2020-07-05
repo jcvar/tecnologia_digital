@@ -1,13 +1,13 @@
 /*
-  Tarea 16
-  Clock
+Tarea 16
+Clock
 
-  Juan Camilo Vargas Q.
-  Sergio Alejandro Vargas Q.
+Juan Camilo Vargas Q.
+Sergio Alejandro Vargas Q.
 
-  Tecnologia Digital
-  Universidad Nacional de Colombia
-  2020-06-24
+Tecnologia Digital
+Universidad Nacional de Colombia
+2020-06-24
 */
 #include <JC_Button.h>
 #include <TimerOne.h>
@@ -19,7 +19,7 @@
 
 #define MILLIS_LOOP 200
 
-// Global structs and enum
+// Global structs, enum and button variables
 court_t court = {COURT_Y, COURT_Y + COURT_H, COURT_X, COURT_X + COURT_W};
 mytime_t clk = {0, 0, 0, true};
 mytime_t alarm = {0, 0, 0, false};
@@ -28,8 +28,13 @@ Button state_button(4); // To cycle through the clock's states
 Button next_button(5);  // To cycle through time values
 
 /* FUNCTIONS */
-void update_time(); // Main clock logic
-void timer1_isr();	// TimerOne interrupt serve routine
+void timer1_isr();  // TimerOne Interrupt Service Routine
+void update_time(); // Main clock logic. Increase values in the clk struct
+
+// TODO: REFACTOR
+state_t update_state(state_t); // Handles the clock's FSM
+void update_next(state_t); // Changes values of mytime_t according to state_t
+
 
 void setup() {
 	TFTscreen.begin(); // For simulator
@@ -42,7 +47,6 @@ void setup() {
 	Timer1.attachInterrupt(timer1_isr); 
 	state_button.begin();
 	next_button.begin();
-
 	force_draw(clk);
 } // END SETUP
 
@@ -64,6 +68,21 @@ void loop() {
 
 } // END LOOP
 
+void update_time() {
+	clk.second++;
+	if (clk.second == 60) {
+		clk.second = 0;
+		clk.minute++;          // Update minute
+		if (clk.minute == 60) {
+			clk.minute = 0;
+			clk.hour++;          // Update hour
+			if (clk.hour == 24) {
+				clk.hour = 0;
+			}
+		}
+	}
+}
+
 void timer1_isr() {
 	// TODO: Blink should only happen on set_<clock/alarm> states
 	// clk.active flags is used to produce a blink effect
@@ -80,9 +99,8 @@ void timer1_isr() {
 	}
 }
 
-// TODO
-// update_state: Handles the clock's FSM
 state_t update_state(state_t old_state) {
+  // TODO
 	switch (old_state) {
 		case set_normal:       return set_alarm_active;
 		case set_alarm_active: return set_alarm_hour;
@@ -95,7 +113,6 @@ state_t update_state(state_t old_state) {
 	}
 }
 
-// update_next: Changes the value of mytime_t struct according to current state
 void update_next(state_t current_state) {
 	// TODO: Refactor
 	// * Take a mytime_t parameter
@@ -121,21 +138,6 @@ void update_next(state_t current_state) {
 		case set_sec:
 			clk.second = 0;
 			break;
-	}
-}
-
-void update_time() {
-	clk.second++;
-	if (clk.second == 60) {
-		clk.second = 0;
-		clk.minute++;          // Update minute
-		if (clk.minute == 60) {
-			clk.minute = 0;
-			clk.hour++;          // Update hour
-			if (clk.hour == 24) {
-				clk.hour = 0;
-			}
-		}
 	}
 }
 

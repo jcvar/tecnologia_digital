@@ -1,13 +1,18 @@
 // This module contains the functions that interact with the TFT screen
 
-#define INIT_X 10
-#define INIT_Y 51
+// Dimensions of a digit's image
 #define DIGIT_W 16
 #define DIGIT_H 24
+#define MEM_OFFSET   384 // W*H
+
+// Reference points for the digits' positions
+#define INIT_X  10
+#define INIT_Y  51
+#define DIGIT_OFFSET 4
+
+// Dimensions of the indicator block
 #define BLOCK_W 52
 #define BLOCK_H 4
-#define DIGIT_OFFSET 4
-#define MEM_OFFSET 384 // W*H
 
 // TFT screen instance
 TFT TFTscreen = TFT(CS, DC, RST);
@@ -77,13 +82,11 @@ void draw_time(mytime_t t) {
 }
 
 // FIXME
-// draw_mode: Draws an indicator to show the current state
-void draw_mode(state_t mode) {
+// draw_state: Draws an indicator to show the current state
+void draw_state_indicator(state_t state) {
 	int pos = 0;
-	word cor = COLOR_RED;
-	// Erase the previous indicator
-	TFTscreen.drawRect(COURT_X + 1, INIT_Y + DIGIT_H + 1, COURT_W - 2, BLOCK_H, COLOR_BLACK);
-	switch (mode) {
+	word cor = COLOR_BLACK;
+	switch (state) {
 	case set_normal: // Do nothing;
 		break;
 	case set_alarm_active:
@@ -109,5 +112,9 @@ void draw_mode(state_t mode) {
 	case set_sec:
 		break;
 	}
-		TFTscreen.drawRect(pos, INIT_Y + DIGIT_H + 1, BLOCK_W, BLOCK_H, cor);
+	// Erase the previous indicator
+	TFTscreen.drawRect(COURT_X + 1, INIT_Y + DIGIT_H + 1, COURT_W - 2, BLOCK_H, COLOR_BLACK);
+	// Draw new indicator
+	TFTscreen.drawRect(pos, INIT_Y + DIGIT_H + 1, BLOCK_W, BLOCK_H, cor);
 }
+
