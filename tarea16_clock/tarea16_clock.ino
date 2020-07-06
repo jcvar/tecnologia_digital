@@ -29,10 +29,9 @@ Button next_button(5);  // To cycle through time values
 /* FUNCTIONS */
 void timer1_isr();  // TimerOne Interrupt Service Routine
 void update_time(); // Main clock logic. Increase values in the clk struct
-
-// TODO: REFACTOR
 state_t update_state(state_t); // Handles the clock's FSM
 void update_next(state_t); // Changes values of mytime_t according to state_t
+void choose_draw(state_t); // Select which mytime_t to force_draw
 
 
 void setup() {
