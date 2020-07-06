@@ -26,7 +26,6 @@ mytime_t alarm = {0, 0, 0, false};
 state_t clk_state = normal;
 Button mode_button(4); // To cycle through the clock's states
 Button next_button(5);  // To cycle through time values
-pinMode(BUZZER_PIN, OUTPUT); // To buzz!
 bool buzzer_on = false;
 
 /* FUNCTIONS */
@@ -39,8 +38,8 @@ bool check_alarm();
 
 
 void setup() {
-  //TFTscreen.begin(); // For simulator
-  TFTscreen.begin(INITR_BLACKTAB); // INITR_BLACKTAB for BGR
+  TFTscreen.begin(); // For simulator
+  //TFTscreen.begin(INITR_BLACKTAB); // INITR_BLACKTAB for BGR
   TFTscreen.background(COLOR_BLACK);
 
   // TimerOne
@@ -49,6 +48,7 @@ void setup() {
   // Button
   mode_button.begin();
   next_button.begin();
+  pinMode(BUZZER_PIN, OUTPUT); // To buzz!
   //
   force_draw(clk, false);
   force_draw(alarm, true);
@@ -189,4 +189,3 @@ bool check_alarm() {
   }
   return false;
 }
-
