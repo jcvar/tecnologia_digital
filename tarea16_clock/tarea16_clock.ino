@@ -18,15 +18,16 @@
 #include "clock_draw.h"
 
 #define MILLIS_LOOP 200
-#define BUZZER_PIN 7
+#define BUZZER_PIN 3
 
 // Global structs, enum and button variables
 mytime_t clk = {0, 0, 0, true};
 mytime_t alarm = {0, 0, 0, false};
 state_t clk_state = normal;
+bool buzzer_on = false;
+// External declarations
 Button mode_button(4); // To cycle through the clock's states
 Button next_button(5);  // To cycle through time values
-bool buzzer_on = false;
 
 /* FUNCTIONS */
 void timer1_isr();  // TimerOne Interrupt Service Routine
@@ -73,6 +74,8 @@ void loop() {
 
   if (millis() - loop_millis > MILLIS_LOOP) {
     loop_millis = millis();
+    
+    
     // BUTTONS LOGIC
     if (mode_flag) {
       mode_flag = false;
@@ -89,35 +92,24 @@ void loop() {
 } // END LOOP
 
 void update_time() {
-  clk.second++;
-  if (clk.second == 60) {
-    clk.second = 0;
-    clk.minute++;          // Update minute
-    if (clk.minute == 60) {
-      clk.minute = 0;
-      clk.hour++;          // Update hour
-      if (clk.hour == 24) {
-        clk.hour = 0;
-      }
+  clk.second = ++clk.second % 60;   // Update second
+  if (clk.second == 0) {
+    clk.minute = ++clk.minute % 60; // Update minute
+    // Activate buzzer if alarm is on
+    buzzer_on = alarm.active && alarm.hour == clk.hour && alarm.minute == clk.minute;
+    if (clk.minute == 0) {
+      clk.hour = ++clk.hour % 24;   // Update hour
     }
   }
 }
 
 void timer1_isr() {
-  // TODO: Blink should only happen on set_<clock/alarm> states
-  // clk.active flags is used to produce a blink effect?
-  clk.active = !clk.active;
-
+  clk.active = !clk.active; // Alternate each 500ms
+  digitalWrite(BUZZER_PIN, buzzer_on && clk.active);
+  
   if (clk.active) {
     update_time();
     draw_time(clk);
-    buzzer_on = check_alarm();
-    if (buzzer_on) {
-      digitalWrite(BUZZER_PIN, HIGH);
-    }
-  } else {
-    digitalWrite(BUZZER_PIN, LOW);
-    // Erase digit images
   }
 }
 
@@ -138,6 +130,7 @@ void update_next(state_t cur_state) {
   // TODO: Take a mytime_t parameter?
   switch (cur_state) {
     case normal:
+      alarm.active = false;
       buzzer_on = false;
       break;
     case set_alarm_active:
@@ -179,13 +172,4 @@ void choose_draw(state_t cur_state) {
       force_draw(clk, false);
       break;
   }
-}
-
-bool check_alarm() {
-  if (alarm.active) {
-    if (alarm.hour == clk.hour && alarm.minute == clk.minute) {
-        return true;
-      }
-  }
-  return false;
 }
