@@ -21,7 +21,8 @@ TFT TFTscreen = TFT(CS, DC, RST);
 int get_pos_x(digit_t dgt) {
   static int space_x = DIGIT_W + DIGIT_OFFSET;
   static int dots_x = DIGIT_W / 2 + DIGIT_OFFSET;
-  int x = 0;
+  static int x = 0;
+  x = 0;
   switch (dgt) {
     case second_units:
       x += space_x;
@@ -45,14 +46,28 @@ int get_pos_y(bool is_alarm) {
 
 // draw_digit: Reads a digit's image from memory and draw it in the screen
 void draw_digit(unsigned short digit, digit_t dgt, bool is_alarm) {
-  int pos_x = get_pos_x(dgt);
-  int pos_y = get_pos_y(is_alarm);
-  int offset = digit * MEM_OFFSET;
+  static int pos_x = 0;
+  static int pos_y = 0;
+  static int offset = 0;
+  pos_x = get_pos_x(dgt);
+  pos_y = get_pos_y(is_alarm);
+  offset = digit * MEM_OFFSET;
   for (int row = 0; row < DIGIT_H; row++) {
     for (int col = 0; col < DIGIT_W; col++) {
       word p = pgm_read_word(digits + offset + (row * DIGIT_W + col));
       TFTscreen.drawPixel(col + pos_x, row + pos_y, p);
     }
+  }
+}
+
+
+void draw_alarm(bool alarm_active) {
+  static int pos_x = get_pos_x(second_tens);
+  static int pos_y = ALARM_Y;
+  if(alarm_active){
+    TFTscreen.fillRect(pos_x, pos_y, BLOCK_W, DIGIT_H, COLOR_YELLOW);
+  } else {
+    TFTscreen.fillRect(pos_x, pos_y, BLOCK_W, DIGIT_H, COLOR_BLACK);
   }
 }
 
@@ -78,7 +93,9 @@ void draw_time(mytime_t t) {
 
 // force_draw: Draw all digits
 void force_draw(mytime_t t, bool is_alarm) {
-  if (!is_alarm) {
+  if (is_alarm) {
+    draw_alarm(t.active);
+  } else {
     draw_digit(t.second % 10, second_units, false);
     draw_digit(t.second / 10, second_tens, false);
   }

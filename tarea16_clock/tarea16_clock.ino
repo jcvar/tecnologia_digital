@@ -50,7 +50,7 @@ void setup() {
   force_draw(clk, false);
   force_draw(alarm, true);
 
-  Serial.begin(9600); // DEBUG
+  //Serial.begin(9600); // DEBUG
 } // END SETUP
 
 void loop() {
@@ -79,9 +79,10 @@ void loop() {
     if (next_flag) {
       next_flag = false;
       update_next(clk_state);
+      choose_draw(clk_state);
     }
 
-    Serial.println(clk_state); // DEBUG
+    //Serial.println(clk_state); // DEBUG
   }
 
 } // END LOOP
@@ -127,10 +128,10 @@ state_t update_state(state_t old_state) {
   }
 }
 
-void update_next(state_t current_state) {
+void update_next(state_t cur_state) {
   // TODO: Refactor
   // * Take a mytime_t parameter
-  switch (current_state) {
+  switch (cur_state) {
     case normal:
       // DO NOTHING
       break;
@@ -151,6 +152,26 @@ void update_next(state_t current_state) {
       break;
     case set_clock_second:
       clk.second = 0;
+      break;
+  }
+}
+
+void choose_draw(state_t cur_state) {
+  // TODO: Refactor
+  // * Take a mytime_t parameter
+  switch (cur_state) {
+    case normal:
+      // DO NOTHING
+      break;
+    case set_alarm_active:
+    case set_alarm_hour:
+    case set_alarm_minute:
+      force_draw(alarm, true);
+      break;
+    case set_clock_hour:
+    case set_clock_minute:
+    case set_clock_second:
+      force_draw(clk, false);
       break;
   }
 }

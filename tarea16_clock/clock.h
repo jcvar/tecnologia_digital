@@ -22,9 +22,9 @@ typedef enum {
 typedef enum {
 	normal,
 	set_alarm_active,
-	set_alarm_hour,
 	set_alarm_minute,
-	set_clock_hour,
-	set_clock_minute,
+	set_alarm_hour,
 	set_clock_second,
+	set_clock_minute,
+	set_clock_hour,
 } state_t;
