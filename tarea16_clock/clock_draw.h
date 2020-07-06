@@ -105,7 +105,6 @@ void force_draw(mytime_t t, bool is_alarm) {
   draw_digit(t.hour / 10, hour_tens, is_alarm);
 }
 
-// FIXME
 // draw_state_indicator: Draws an indicator to show the current state
 void draw_state_indicator(state_t state) {
   static int pos_x = CLOCK_X;
@@ -141,6 +140,7 @@ void draw_state_indicator(state_t state) {
       pos_x = get_pos_x(second_tens);
       pos_y = get_pos_y(false);
       cor = COLOR_GREEN;
+      break;
     default: // normal
       cor = COLOR_BLACK;
       break;

@@ -155,6 +155,7 @@ void update_next(state_t cur_state) {
   }
 }
 
+
 void choose_draw(state_t cur_state) {
   // TODO: Refactor
   // * Take a mytime_t parameter
