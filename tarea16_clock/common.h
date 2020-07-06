@@ -27,9 +27,8 @@
 
 // Court structure
 typedef struct {
-	int top;
-	int bottom;
-	int left;
-	int right;
+  int top;
+  int bottom;
+  int left;
+  int right;
 } court_t;
-

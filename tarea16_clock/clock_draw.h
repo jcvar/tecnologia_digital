@@ -44,7 +44,7 @@ int get_pos_y(bool is_alarm) {
   return is_alarm ? ALARM_Y : CLOCK_Y;
 }
 
-// draw_digit: Reads a digit's image from memory and draw it in the screen
+// draw_digit: Reads a digit's image from memory and draws it in the screen
 void draw_digit(unsigned short digit, digit_t dgt, bool is_alarm) {
   static int pos_x = 0;
   static int pos_y = 0;
@@ -60,11 +60,10 @@ void draw_digit(unsigned short digit, digit_t dgt, bool is_alarm) {
   }
 }
 
-
-void draw_alarm(bool alarm_active) {
+void draw_alarm_bell(bool alarm_active) {
   static int pos_x = get_pos_x(second_tens);
   static int pos_y = ALARM_Y;
-  if(alarm_active){
+  if (alarm_active) {
     TFTscreen.fillRect(pos_x, pos_y, BLOCK_W, DIGIT_H, COLOR_YELLOW);
   } else {
     TFTscreen.fillRect(pos_x, pos_y, BLOCK_W, DIGIT_H, COLOR_BLACK);
@@ -94,7 +93,7 @@ void draw_time(mytime_t t) {
 // force_draw: Draw all digits
 void force_draw(mytime_t t, bool is_alarm) {
   if (is_alarm) {
-    draw_alarm(t.active);
+    draw_alarm_bell(t.active);
   } else {
     draw_digit(t.second % 10, second_units, false);
     draw_digit(t.second / 10, second_tens, false);

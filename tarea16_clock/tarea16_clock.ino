@@ -11,14 +11,11 @@
 */
 #include <JC_Button.h>
 #include <TimerOne.h>
-
 #include "common.h"
 #include "digits_small.h"
 #include "clock.h"
 #include "clock_draw.h"
 
-#define MILLIS_LOOP 200
-#define BUZZER_PIN 3
 
 // Global structs, enum and button variables
 mytime_t clk = {0, 0, 0, true};
@@ -28,15 +25,6 @@ bool buzzer_on = false;
 // External declarations
 Button mode_button(4); // To cycle through the clock's states
 Button next_button(5);  // To cycle through time values
-
-/* FUNCTIONS */
-void timer1_isr();  // TimerOne Interrupt Service Routine
-void update_time(); // Main clock logic. Increase values in the clk struct
-state_t update_state(state_t); // Handles the clock's FSM
-void update_next(state_t); // Changes values of mytime_t according to state_t
-void choose_draw(state_t); // Select which mytime_t to force_draw
-bool check_alarm();
-
 
 void setup() {
   TFTscreen.begin(); // For simulator
@@ -74,8 +62,7 @@ void loop() {
 
   if (millis() - loop_millis > MILLIS_LOOP) {
     loop_millis = millis();
-    
-    
+
     // BUTTONS LOGIC
     if (mode_flag) {
       mode_flag = false;
@@ -106,7 +93,7 @@ void update_time() {
 void timer1_isr() {
   clk.active = !clk.active; // Alternate each 500ms
   digitalWrite(BUZZER_PIN, buzzer_on && clk.active);
-  
+
   if (clk.active) {
     update_time();
     draw_time(clk);
@@ -127,26 +114,26 @@ state_t update_state(state_t old_state) {
 }
 
 void update_next(state_t cur_state) {
-  // TODO: Take a mytime_t parameter?
   switch (cur_state) {
     case normal:
       alarm.active = false;
       buzzer_on = false;
+      draw_alarm_bell(false);
       break;
     case set_alarm_active:
       alarm.active = !alarm.active;
       break;
     case set_alarm_hour:
-      alarm.hour = (alarm.hour + 1) % 24;
+      alarm.hour = ++alarm.hour % 24;
       break;
     case set_alarm_minute:
-      alarm.minute = (alarm.minute + 1) % 60;
+      alarm.minute = ++alarm.minute % 60;
       break;
     case set_clock_hour:
-      clk.hour = (clk.hour + 1) % 24;
+      clk.hour = ++clk.hour % 24;
       break;
     case set_clock_minute:
-      clk.minute = (clk.minute + 1) % 60;
+      clk.minute = ++clk.minute % 60;
       break;
     case set_clock_second:
       clk.second = 0;
@@ -154,9 +141,7 @@ void update_next(state_t cur_state) {
   }
 }
 
-
 void choose_draw(state_t cur_state) {
-  // TODO: Take a mytime_t parameter?
   switch (cur_state) {
     case normal:
       // DO NOTHING
