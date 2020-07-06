@@ -20,12 +20,11 @@ typedef enum {
 // include another button and change the state_t enum
 // state_t: global clock states
 typedef enum {
-	set_normal,
+	normal,
 	set_alarm_active,
 	set_alarm_hour,
 	set_alarm_minute,
-	set_hour,
-	set_minute,
-	set_sec,
+	set_clock_hour,
+	set_clock_minute,
+	set_clock_second,
 } state_t;
-
