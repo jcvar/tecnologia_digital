@@ -1,2 +1,0 @@
-- Fix side collisions
-- Write announcements to screen (game over, play again)
