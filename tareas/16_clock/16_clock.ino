@@ -14,6 +14,7 @@
 
 #include "common.h"
 #include "digits_small.h"
+#include "bell.h"
 #include "clock.h"
 #include "clock_draw.h"
 
@@ -39,10 +40,13 @@ bool check_alarm();
 
 
 void setup() {
-  TFTscreen.begin(); // For simulator
-  //TFTscreen.begin(INITR_BLACKTAB); // INITR_BLACKTAB for BGR
+  //TFTscreen.begin(); // For simulator
+  TFTscreen.begin(INITR_BLACKTAB); // INITR_BLACKTAB for BGR
   TFTscreen.background(COLOR_BLACK);
 
+  force_draw(clk, false);
+  force_draw(alarm, true);
+  
   // TimerOne
   Timer1.initialize(500000); //timing for 500ms
   Timer1.attachInterrupt(timer1_isr); //declare the Interrupt Service routine (ISR): timer1_isr
@@ -50,10 +54,7 @@ void setup() {
   mode_button.begin();
   next_button.begin();
   pinMode(BUZZER_PIN, OUTPUT); // To buzz!
-  //
-  force_draw(clk, false);
-  force_draw(alarm, true);
-
+  
   //Serial.begin(9600); // DEBUG
 } // END SETUP
 
@@ -62,12 +63,13 @@ void loop() {
   static bool mode_flag = false;
   static bool next_flag = false;
 
+
   // Read buttons
   mode_button.read();
+  next_button.read();
   if (mode_button.wasPressed()) {
     mode_flag = true;
   }
-  next_button.read();
   if (next_button.wasPressed()) {
     next_flag = true;
   }
@@ -78,14 +80,14 @@ void loop() {
 
     // BUTTONS LOGIC
     if (mode_flag) {
-      mode_flag = false;
       clk_state = update_state(clk_state);
       draw_state_indicator(clk_state);
+      mode_flag = false;
     }
     if (next_flag) {
-      next_flag = false;
       update_next(clk_state);
       choose_draw(clk_state);
+      next_flag = false;
     }
     //Serial.println(clk_state); // DEBUG
   }

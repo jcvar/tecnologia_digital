@@ -9,7 +9,9 @@
 #define CLOCK_X  10
 #define CLOCK_Y  24
 #define ALARM_Y  80
+#define ALARM_W  32
 #define DIGIT_OFFSET 4
+#define MEM_ALARM_OFFSET 768
 
 // Dimensions of the indicator block
 #define BLOCK_W 36
@@ -63,10 +65,21 @@ void draw_digit(unsigned short digit, digit_t dgt, bool is_alarm) {
 void draw_alarm_bell(bool alarm_active) {
   static int pos_x = get_pos_x(second_tens);
   static int pos_y = ALARM_Y;
+  
   if (alarm_active) {
-    TFTscreen.fillRect(pos_x, pos_y, BLOCK_W, DIGIT_H, COLOR_YELLOW);
+    for (int row = 0; row < DIGIT_H; row++) {
+      for (int col = 0; col < ALARM_W; col++) {
+        word p = pgm_read_word(bell + MEM_ALARM_OFFSET + (row * ALARM_W + col));
+        TFTscreen.drawPixel(col + pos_x, row + pos_y, p);
+      }
+    }
   } else {
-    TFTscreen.fillRect(pos_x, pos_y, BLOCK_W, DIGIT_H, COLOR_BLACK);
+    for (int row = 0; row < DIGIT_H; row++) {
+      for (int col = 0; col < ALARM_W; col++) {
+        word p = pgm_read_word(bell + (row * ALARM_W + col));
+        TFTscreen.drawPixel(col + pos_x, row + pos_y, p);
+      }
+    }
   }
 }
 

@@ -10,8 +10,8 @@ Button enterButton(5);
 #include <TimerOne.h>
 
 // pin definition for Arduino UNO
-#define cs   10
-#define dc   9   
+#define cs   9
+#define dc   10   
 #define rst  8
 
 // create an instance of the class TFT
@@ -40,7 +40,7 @@ Clock myClock;
 
 void setup() {
   // put your setup code here, to run once:
-  TFTscreen.begin();     //inicializar TFT
+  TFTscreen.begin(INITR_BLACKTAB);     //inicializar TFT
   Serial.begin(9600);    //inicializar puerto serial
 
   //configurar interrupcion cada medio segundo
