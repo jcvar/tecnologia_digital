@@ -30,8 +30,6 @@
 #define COLOR_COURT_DARK 0x33F7
 
 // Game definitions
-#define BALL_W 5
-#define BALL_H 5
 #define BALL_SIZE 5
 #define PADDLE_W 5
 #define PADDLE_H 20
@@ -58,7 +56,7 @@
 
 // SCORE POSITIONS
 #define SCORE_LX 40
-#define SCORE_RX 144
+#define SCORE_RX 104
 
 typedef enum {	menu, new_game, serve_game, play_game, game_over} state_t;
 
