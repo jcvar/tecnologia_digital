@@ -55,42 +55,44 @@
 #define SERVICE_RX 122 // SERVICE_LX + SERVICE_W
 
 // SCORE POSITIONS
-#define SCORE_LX 40
-#define SCORE_RX 104
+#define SCORE_LX 4
+#define SCORE_RX 136
 
 typedef enum {	menu, new_game, serve_game, play_game, game_over} state_t;
+
+typedef enum {  s0, s15, s30, s40, sGame, sNoAdv, sDeuce, sAdv} score_t;
 
 typedef enum {	no_goal, left, right} side_t;
 
 // Court structure
 typedef struct {
-	int top;
-	int bottom;
-	int left;
-	int right;
+  int top;
+  int bottom;
+  int left;
+  int right;
 } court_t;
 
 // Paddle structure
 typedef struct {
-	int posX;
-	int posY;
-	int oldY;
+  int posX;
+  int posY;
+  int oldY;
 } paddle_t;
 
 // Ball structure
 typedef struct {
-	int posX;
-	int posY;
-	int oldX;
-	int oldY;
-	int speedX;
-	int speedY;
+  int posX;
+  int posY;
+  int oldX;
+  int oldY;
+  int speedX;
+  int speedY;
 } ball_t;
 
 typedef struct {
-	int score;
-	side_t side;
-	paddle_t paddle;
+  int score;
+  side_t side;
+  paddle_t paddle;
 } player_t;
 
 // Game logic
