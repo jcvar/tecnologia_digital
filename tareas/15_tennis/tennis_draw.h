@@ -22,8 +22,8 @@ void draw_ball(ball_t b, TFT TFTscr, word bg) {
     TFTscr.fillRect(b.oldX, b.oldY, BALL_W, BALL_H, bg);
     for (int row = 0; row < BALL_H; row++) {
       for (int col = 0; col < BALL_W; col++) {
-        word p = pgm_read_word(img_ball + row * BALL_W + col);
-        TFTscr.drawPixel(col + b.posX, row + b.posY, p);
+        word px = pgm_read_word(img_ball + row * BALL_W + col);
+        TFTscr.drawPixel(col + b.posX, row + b.posY, px);
       }
     }
   }
@@ -34,8 +34,8 @@ void draw_paddle(paddle_t p, TFT TFTscr, word bg) {
     TFTscr.fillRect(p.posX, p.oldY, PADDLE_W, PADDLE_H, bg);
     for (int row = 0; row < PADDLE_W; row++) {
       for (int col = 0; col < PADDLE_W; col++) {
-        word p = pgm_read_word(img_paddle + row * PADDLE_W + col);
-        TFTscr.drawPixel(p.posX + col, p.posY + row, p);
+        word px = pgm_read_word(img_paddle + row * PADDLE_W + col);
+        TFTscr.drawPixel(col + p.posX, row + p.posY, px);
       }
     }
   }

@@ -60,7 +60,9 @@ typedef struct {
   int right;
 } court_t;
 
-
+/*
+  PADDLE STUFF
+*/
 typedef struct {
   int posX;
   int posY;
@@ -75,3 +77,19 @@ typedef struct {
   int speedX;
   int speedY;
 } ball_t; // struct ball_t
+
+
+void move_paddle(paddle_t *p, int t_posY) {
+  p.oldY = posY;
+  p.posY = t_posY;
+}  // move_paddle()
+
+void move_ball(ball_t *b, court_t *crt) {
+  b.oldX = b.posX;
+  b.oldY = b.posY;
+  if (b.posY <= crt.top || b.posY >= crt.bottom - BALL_H) {
+    b.speedY = -b.speedY;
+  }
+  b.posX += b.speedX;
+  b.posY += b.speedY;
+} // move_paddle()

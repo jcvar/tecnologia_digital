@@ -18,11 +18,11 @@ TFT TFTscreen = TFT(CS, DC, RST);
 court_t court = {COURT_Y + 1, COURT_Y + COURT_H - 1, COURT_X + 1, COURT_X + COURT_W - 1}; // 1px smaller for collisions
 
 // ball_t(pX, pY, dX, dY);
-ball_t ball(CENTER_X, CENTER_Y, -1, 1);
+ball_t ball = {CENTER_X, CENTER_Y, CENTER_X + 1, CENTER_Y + 1, -1, 1};
 
 // paddle_t(pX, pY);
-paddle_t left(court.left, court.top, court.top-1);
-paddle_t right(court.right - PADDLE_W, court.top, court.top-1);
+paddle_t left = {court.left, court.top, court.top - 1};
+paddle_t right = {court.right - PADDLE_W, court.top, court.top - 1};
 
 // Game variables
 bool start = false;
@@ -49,7 +49,7 @@ void setup() {
   draw_inner_lines(TFTscreen, COLOR_LINE);
   TFTscreen.stroke(COLOR_LINE);
   //TFTscreen.setTextSize(2);
-  TFTscreen.text("TENNIS", 68, 4);
+  TFTscreen.text("AUSTRALIAN OPEN", 68, 4);
   reset_score();
 
   delay(10000);
@@ -62,13 +62,13 @@ void loop() {
 
   if (millis() - millis_left > MILLIS_PADDLE) {
     millis_left = millis();
-    left.move(map(analogRead(PIN_LEFT), 1023, 0, court.top, court.bottom - PADDLE_H));
+    move_paddle(&left, map(analogRead(PIN_LEFT), 1023, 0, court.top, court.bottom - PADDLE_H));
     left.draw(TFTscreen, COLOR_COURT_DARK);
   }
   if (millis() - millis_right > MILLIS_PADDLE) {
     millis_right = millis();
-    right.move(map(analogRead(PIN_RIGHT), 1023, 0, court.top, court.bottom - PADDLE_H));
-    right.draw(TFTscreen, COLOR_COURT_DARK);
+    move_paddle(&right, map(analogRead(PIN_RIGHT), 1023, 0, court.top, court.bottom - PADDLE_H));
+    draw_paddle(TFTscreen, COLOR_COURT_DARK);
   }
 
   if (millis() - millis_ball > MILLIS_BALL) {
@@ -170,26 +170,13 @@ void reset_score() {
   update_score(1);
 }
 
-void move_paddle(int t_posY) {
-      oldY = posY;
-      posY = t_posY;
-    }  // move()
 
-void move_ball(court_t crt) {
-      oldX = posX;
-      oldY = posY;
-      if (posY <= crt.top || posY >= crt.bottom - h) {
-        speedY = -speedY;
-      }
-      posX += speedX;
-      posY += speedY;
-    } // move()
 
-    int check_goal(court_t crt) { // Return -1 or 1 for goal on left or right ends, else 0
-      if (posX <= crt.left)  {
-        return -1;
-      } else if (posX >= crt.right - w) {
-        return 1;
-      }
-      return 0;
-    } // check_goal()
+int check_goal(court_t crt) { // Return -1 or 1 for goal on left or right ends, else 0
+  if (posX <= crt.left)  {
+    return -1;
+  } else if (posX >= crt.right - w) {
+    return 1;
+  }
+  return 0;
+} // check_goal()
