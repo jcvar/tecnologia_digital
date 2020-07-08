@@ -41,58 +41,58 @@
 #define MAX_SCORE 5 // MAX: 9
 
 // Court parameters (Tennis court dimensions 1ft = 2px)
-#define COURT_X 2
-#define COURT_Y 28
-#define COURT_W 156
-#define COURT_H 72
+#define COURT_W 156 // 39 * 4
+#define COURT_H 72 // 36 * 2
+#define COURT_X 2 // (160-156)/2
+#define COURT_Y 28 // (128-72)/2
 
 #define CENTER_X 80
 #define CENTER_Y 64
 
-#define SINGLES_UY 37
-#define SINGLES_DY 91
-#define SINGLES_H 54
-#define SERVICE_LX 38
-#define SERVICE_RX 122
-#define SERVICE_W 84
+#define SINGLES_H 54 // 27 * 2
+#define SINGLES_UY 37 // COURT_X + 9
+#define SINGLES_DY 91 // COURT_UY + SINGLES_H
+#define SERVICE_W 84 // 21 * 4
+#define SERVICE_LX 38 // (39-21)*2 + 2
+#define SERVICE_RX 122 // SERVICE_LX + SERVICE_W
 
 // SCORE POSITIONS
 #define SCORE_LX 40
 #define SCORE_RX 144
 
-typedef enum {menu, new_game, serve_game, play_game, game_over} state_t;
+typedef enum {	menu, new_game, serve_game, play_game, game_over} state_t;
 
-typedef enum {none, left, right} side_t;
+typedef enum {	no_goal, left, right} side_t;
 
 // Court structure
 typedef struct {
-  int top;
-  int bottom;
-  int left;
-  int right;
+	int top;
+	int bottom;
+	int left;
+	int right;
 } court_t;
 
 // Paddle structure
 typedef struct {
-  int posX;
-  int posY;
-  int oldY;
+	int posX;
+	int posY;
+	int oldY;
 } paddle_t;
 
 // Ball structure
 typedef struct {
-  int posX;
-  int posY;
-  int oldX;
-  int oldY;
-  int speedX;
-  int speedY;
+	int posX;
+	int posY;
+	int oldX;
+	int oldY;
+	int speedX;
+	int speedY;
 } ball_t;
 
 typedef struct {
-  int score;
-  side_t side;
-  paddle_t paddle;
+	int score;
+	side_t side;
+	paddle_t paddle;
 } player_t;
 
 // Game logic
