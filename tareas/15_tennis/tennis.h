@@ -37,8 +37,6 @@
 #define PADDLE_H 20
 
 // Game logic definitions
-#define MILLIS_BALL 50
-#define MILLIS_PADDLE 50
 #define MILLIS_GAME 50
 #define MAX_SCORE 5 // MAX: 9
 
@@ -61,6 +59,10 @@
 // SCORE POSITIONS
 #define SCORE_LX 40
 #define SCORE_RX 144
+
+typedef enum {menu, new_game, serve_game, play_game, game_over} state_t;
+
+typedef enum {none, left, right} side_t;
 
 // Court structure
 typedef struct {
@@ -87,33 +89,27 @@ typedef struct {
   int speedY;
 } ball_t;
 
-typedef enum {menu, start, game_over} state_t;
-
-typedef enum {none, left, right} player_side_t;
-
 typedef struct {
   int score;
-  player_side_t side;
+  side_t side;
   paddle_t paddle;
 } player_t;
 
-int check_collision(ball_t, paddle_t);
-int check_ranges(int dy);
-bool update_score(int result);
-void reset_score();
-int check_goal(court_t crt);
-int check_collision(ball_t b, paddle_t p);
+// Game logic
+void tennis_match();
+side_t check_goal(ball_t *b, court_t *crt);
 
-/* MOVE FUNCTIONS */
+// Check collisions
+int get_new_speed(int dy);
+void check_collision_paddle(ball_t *b, paddle_t *p);
+void check_collision_court(ball_t *b, court_t *crt);
 
-void move_ball(ball_t *, court_t *);
-void move_paddle(paddle_t *, int);
+// Move functions
+void move_ball(ball_t *b);
+void move_paddle(paddle_t *p, int new_posY);
 
-/* DRAW FUNCTIONS */
-
-void draw_score();
-//void draw_ball(ball_t *b, word bg);
-//void draw_paddle(paddle_t *p, word bg);
-//void draw_inner_lines(word cor);
-//void draw_outer_lines(word cor);
-
+// Draw functions
+void draw_score(player_t *player);
+void draw_ball(ball_t *b, word bg);
+void draw_paddle(paddle_t *p, word bg);
+void draw_lines(word cor);

@@ -13,10 +13,13 @@
 
 TFT TFTscreen = TFT(CS, DC, RST);
 
-// TODO: Refactor these booleans into a game_state enum
-bool start = false;
-bool game_over = true;
-bool button = false;
+// court_t {top, bottom, left, right}. 1px smaller for collisions
+court_t court = {COURT_Y + 1, COURT_Y + COURT_H - 1, COURT_X + 1, COURT_X + COURT_W - 1};
+// ball_t{pX, pY, dX, dY}
+ball_t ball = {CENTER_X, CENTER_Y, CENTER_X + 1, CENTER_Y + 1, -1, 1};
+// player_t {score, side, paddle_t{pX, pY, oldY} }
+player_t playerL = {0, left, {court.left, court.top, court.top - 1}};
+player_t playerR = {0, right, {court.right - PADDLE_W, court.top, court.top - 1}};
 
 void setup() {
   //TFTscreen.begin(INITR_BLACKTAB);
@@ -26,7 +29,7 @@ void setup() {
   TFTscreen.background(COLOR_COURT_LIGHT);
   TFTscreen.fillRect(COURT_X, COURT_Y, COURT_W, COURT_H, COLOR_COURT_DARK);
   TFTscreen.drawRect(COURT_X, COURT_Y, COURT_W, COURT_H, COLOR_LINE);
-  draw_inner_lines(TFTscreen, COLOR_LINE);
+  draw_lines(COLOR_LINE);
   TFTscreen.stroke(COLOR_LINE);
   //TFTscreen.setTextSize(2);
   TFTscreen.text("AUSTRALIAN OPEN", 68, 4);
@@ -35,78 +38,88 @@ void setup() {
 }
 
 void loop() {
-  // court_t {top, bottom, left, right}. 1px smaller for collisions
-  static court_t court = {COURT_Y + 1, COURT_Y + COURT_H - 1, COURT_X + 1, COURT_X + COURT_W - 1};
-  // ball_t{pX, pY, dX, dY}
-  static ball_t ball = {CENTER_X, CENTER_Y, CENTER_X + 1, CENTER_Y + 1, -1, 1};
-  // player_t {score, side, paddle_t{pX, pY, oldY} }
-  static player_t playerL = {0, left, {court.left, court.top, court.top - 1}}
-  static player_t playerR = {0, right, {court.right - PADDLE_W, court.top, court.top - 1}}
+  static unsigned long prev_millis = 0;
+  if (millis() - prev_millis > MILLIS_GAME) {
+    prev_millis = millis();
 
-  static unsigned long millis_ball = 0;
-  static unsigned long millis_left = 0;
-  static unsigned long millis_right = 0;
+    // Update paddles' positions
+    move_paddle(&playerL.paddle, map(analogRead(PIN_LEFT), 1023, 0, court.top, court.bottom - PADDLE_H));
+    move_paddle(&playerR.paddle, map(analogRead(PIN_RIGHT), 1023, 0, court.top, court.bottom - PADDLE_H));
+    draw_paddle(&playerL.paddle, COLOR_COURT_DARK);
+    draw_paddle(&playerL.paddle, COLOR_COURT_DARK);
 
-  static unsigned long millis_game = 0;
-
-  if (millis() - millis_left > MILLIS_PADDLE) {
-    // Left paddle moves
-    millis_left = millis();
-    move_paddle(&left, map(analogRead(PIN_LEFT), 1023, 0, court.top, court.bottom - PADDLE_H));
-    left.draw(TFTscreen, COLOR_COURT_DARK);
-    // Right paddle moves
-    millis_right = millis();
-    move_paddle(&right, map(analogRead(PIN_RIGHT), 1023, 0, court.top, court.bottom - PADDLE_H));
-    draw_paddle(TFTscreen, COLOR_COURT_DARK);
-  }
-
-  if (millis() - millis_ball > MILLIS_BALL) {
-    millis_ball = millis();
-
-    if (!game_over) {
-      // RUN GAME LOGIC
-      ball.move(court);
-      ball.draw(TFTscreen, COLOR_COURT_DARK);
-      game_over = update_score(ball.check_goal(court));
-
-      static int new_speed = 0;
-      if (ball.speedX > 0) {
-        new_speed = check_collision(ball, right);
-      } else if (ball.speedX < 0) {
-        new_speed = check_collision(ball, left);
-      }
-      if (new_speed != 0) {
-        ball.speedY += new_speed;
-        ball.speedX *= -1;
-      }
-      //if((new_speed = check_collision(ball, left))) {
-      //	ball.speedY = new_speed;
-      //}
-    } else if (score_left < MAX_SCORE && score_right < MAX_SCORE) {
-      // NEW ROUND: RESET BALL
-      TFTscreen.fillRect(ball.posX, ball.posY, BALL_W, BALL_H, COLOR_COURT_DARK);
-      ball.posX = CENTER_X;
-      ball.posY = CENTER_Y;
-      ball.speedX *= -1;
-      game_over = false;
-    } else if (start) {
-      // NEW GAME: RESET BALL AND SCOREBOARD
-      start = false;
-      //TODO: reset_score();
-      TFTscreen.fillRect(ball.posX, ball.posY, BALL_W, BALL_H, COLOR_COURT_DARK);
-      ball.posX = CENTER_X;
-      ball.posY = CENTER_Y;
-      ball.speedX *= -1;
-      ball.draw(TFTscreen, COLOR_COURT_DARK);
-      game_over = false;
-    } else if (game_over && digitalRead(PIN_START)) {
-      start = true;
-      //} else {
-      //	button = ;
-    }
+    tennis_match();
   }
 }
 
+// Game logic state machine
+void tennis_match() {
+  static state_t game_state = new_game;
+  static side_t goal_side = none;
+
+  switch (game_state) {
+    case new_game:
+      // Reset players' scores
+      playerL.score = 0;
+      playerR.score = 0;
+      draw_score(&playerL);
+      draw_score(&playerR);
+      // TODO: ADD START GAME BUTTON
+      game_state = serve_game;
+      break;
+
+    case serve_game:
+      //move ball to centre
+      ball.oldX = ball.posX;
+      ball.oldY = ball.posY;
+      ball.posX = CENTER_X;
+      ball.posY = CENTER_Y;
+      draw_ball(&ball, COLOR_COURT_DARK);
+      ball.speedX *= -1;
+      ball.speedY = ball.speedY > 0 ? -1 : 1;
+      game_state = play_game;
+      break;
+
+    case play_game:
+      move_ball(&ball);
+      draw_ball(&ball, COLOR_COURT_DARK);
+      goal_side = check_goal(&ball, &court);
+      if (goal_side == none) {
+        check_collision_paddle(&ball, &playerR.paddle);
+        check_collision_paddle(&ball, &playerL.paddle);
+        check_collision_court(&ball, &court);
+      } else {
+        if (goal_side == right) {
+          playerL.score += 1;
+          draw_score(&playerL);
+        } else if (goal_side == left) {
+          playerR.score += 1;
+          draw_score(&playerR);
+        }
+        if (playerL.score < MAX_SCORE && playerR.score < MAX_SCORE) {
+          game_state = serve_game;
+        } else {
+          game_state = game_over;
+        }
+      }
+      break;
+
+    case game_over:
+      // draw_win(goal_side);
+      // TODO: button
+      // game_state = new_game;
+      break;
+  }
+}
+
+side_t check_goal(ball_t *b, court_t *crt) {
+  if (b->posX <= crt->left) {
+    return left;
+  } else if (b->posX >= court.right - BALL_SIZE) {
+    return right;
+  }
+  return none;
+} // check_goal
 
 /* get_new_speed: Returns an integer between (-2, 2)
   depending on which part of the paddle the ball's position hits */
@@ -122,44 +135,34 @@ int get_new_speed(int dy) {
   }
 }
 
-/* check_collision: If the ball hits a paddle, return the new speed of the ball */
-int check_collision(ball_t *b, paddle_t *p) {
+/* check_collision: If the ball hits a paddle, bounce */
+void check_collision_paddle(ball_t *b, paddle_t *p) {
   // Check y-axis
-  if (b->posY < p->posY + p->h && b->posY + b->h > p->posY) {
+  if (b->posY < p->posY + PADDLE_H && b->posY + BALL_SIZE > p->posY) {
     // if ball collides on the left side of the paddle
-    if (b->speedX > 0 && b->posX + b->w >= p->posX) {
-      return get_new_speed(b->posY - p->posY);
-    // if ball collides on the right side of the paddle
-    } else if (b->speedX < 0 && b->posX <= p->posX + p->w) {
-      return get_new_speed(b->posY - p->posY);
+    if (b->speedX > 0 && b->posX + BALL_SIZE >= p->posX) {
+      b->speedY += get_new_speed(b->posY - p->posY);
+      b->speedX *= -1;
+      // if ball collides on the right side of the paddle
+    } else if (b->speedX < 0 && b->posX <= p->posX + PADDLE_W) {
+      b->speedY += get_new_speed(b->posY - p->posY);
+      b->speedX *= -1;
     }
   }
-  return 0; // no collision
 }
 
-// TODO:
-//bool update_score(player_t *player) {
-//  player->score += 1;
-//}
-
-// check_goal: Returns -1 or 1 for goal on left or right ends, else 0
-int check_goal(ball_t *b, court_t *crt) { 
-  if (b->posX <= crt->left) {
-    return -1;
-  } else if (b->posX >= court.right - BALL_SIZE) {
-    return 1;
-  }
-  return 0;
-} // check_goal
-
-/* MOVE FUNTIONS */
-
-void move_ball(ball_t *b, court_t *crt) {
-  b->oldX = b->posX;
-  b->oldY = b->posY;
+void check_collision_court(ball_t *b, court_t *crt) {
+  // Check collision against the court
   if (b->posY <= crt->top || b->posY >= crt->bottom - BALL_SIZE) {
     b->speedY = -b->speedY;
   }
+}
+
+/* MOVE FUNTIONS */
+
+void move_ball(ball_t *b) {
+  b->oldX = b->posX;
+  b->oldY = b->posY;
   b->posX += b->speedX;
   b->posY += b->speedY;
 } // move_ball
@@ -172,13 +175,13 @@ void move_paddle(paddle_t *p, int new_posY) {
 /* DRAW FUNCTIONS */
 
 void draw_score(player_t *player) {
-  static char *str_left;
-  static char *str_right;
+  static char str_left;
+  static char str_right;
 
   if (player->side == right) {
     // Erase previous score
     TFTscreen.stroke(COLOR_BLACK);
-    TFTscreen.text(str_right, SCORE_RX, 4); 
+    TFTscreen.text(str_right, SCORE_RX, 4);
     // Draw new score
     TFTscreen.stroke(COLOR_WHITE);
     str_right = (char)player->score + '0';
@@ -195,11 +198,12 @@ void draw_score(player_t *player) {
   }
 }
 
-
+// draw_ball: Also calls draw_lines
 void draw_ball(ball_t *b, word bg) {
   if (b->posX != b->oldX || b->posY != b->oldY) {
     // Erase previous position
     TFTscreen.fillRect(b->oldX, b->oldY, BALL_W, BALL_H, bg);
+    draw_lines(COLOR_LINE);
     // Draw new position
     for (int row = 0; row < BALL_SIZE; row++) {
       for (int col = 0; col < BALL_SIZE; col++) {
@@ -224,7 +228,10 @@ void draw_paddle(paddle_t *p, word bg) {
   }
 } // draw_paddle
 
-void draw_inner_lines(word cor) {
+void draw_lines(word cor) {
+  // Doubles lines
+  TFTscreen.drawFastHLine(COURT_X, COURT_Y, COURT_W, cor);
+  TFTscreen.drawFastHLine(COURT_X, COURT_Y + COURT_H, COURT_W, cor);
   // Singles lines
   TFTscreen.drawFastHLine(COURT_X, SINGLES_UY, COURT_W, cor);
   TFTscreen.drawFastHLine(COURT_X, SINGLES_DY, COURT_W, cor);
@@ -235,10 +242,4 @@ void draw_inner_lines(word cor) {
   TFTscreen.drawFastHLine(SERVICE_LX, CENTER_Y, SERVICE_W, cor);
   // Net
   TFTscreen.drawFastVLine(CENTER_X, COURT_Y, COURT_H, cor);
-} // draw_inner_lines
-
-void draw_outer_lines(word cor) {
-  TFTscreen.drawFastHLine(COURT_X, COURT_Y, COURT_W, cor);
-  TFTscreen.drawFastHLine(COURT_X, COURT_Y + COURT_H, COURT_W, cor);
-} // draw_outer_lines
-
+} // draw_lines
