@@ -24,17 +24,9 @@ player_t playerR = {0, right, {court.right - PADDLE_W, court.top - 1, court.top}
 void setup() {
   TFTscreen.begin(INITR_BLACKTAB);
   //TFTscreen.begin();
-
-  TFTscreen.background(COLOR_COURT_LIGHT);
+  
   TFTscreen.stroke(COLOR_LINE);
-  draw_decorations();
-  TFTscreen.setTextSize(2);
-
-  // Draw court
-  TFTscreen.fillRect(COURT_X, COURT_Y, COURT_W, COURT_H + 1, COLOR_COURT_DARK);
-  TFTscreen.drawRect(COURT_X, COURT_Y, COURT_W, COURT_H + 1, COLOR_LINE);
-  draw_lines(COLOR_LINE);
-
+  
   Serial.begin(9600);
 }
 
@@ -60,6 +52,7 @@ void tennis_match() {
 
   switch (game_state) {
     case new_game:
+      draw_decorations();
       // Reset players' scores
       playerL.score = 0;
       playerR.score = 0;
@@ -131,7 +124,7 @@ side_t check_goal(ball_t *b, court_t *crt) {
 } // check_goal
 
 void update_scores(player_t * win, player_t * lose) {
-  if (win->score == 30 && lose->score <= s40) { // Deuce logic
+  if (lose->score >= s40 && win->score >= s30) { // Deuce logic
     if (win->score == s30 or win->score == sNoAdv) { // if 30 or no adv, deuce
       win->score = sDeuce;
       lose->score = sDeuce;
@@ -216,6 +209,7 @@ void draw_score(player_t *player) {
   static const char score_str[8][3] = {" 0", "15", "30", "40", " G", "  ", "D ", "AD"};
   static int str_left = 0;
   static int str_right = 0;
+  TFTscreen.setTextSize(2);
 
   if (player->side == right) {
     // Erase previous score
@@ -285,21 +279,15 @@ void draw_lines(word cor) {
 } // draw_lines
 
 void draw_decorations() {
-  TFTscreen.setRotation(3); // Upside down
-  TFTscreen.text("AUSTRALIAN  OPEN", 33, 17);
-  for (int row = 0; row < BALL_SIZE; row++) {
-    for (int col = 0; col < BALL_SIZE; col++) {
-      word px = pgm_read_word(img_ball + row * BALL_SIZE + col);
-      TFTscreen.drawPixel(col + 96, row + 18, px);
-    }
-  }
+  TFTscreen.background(COLOR_COURT_LIGHT);
+  // Draw court
+  TFTscreen.fillRect(COURT_X, COURT_Y, COURT_W, COURT_H + 1, COLOR_COURT_DARK);
+  //TFTscreen.drawRect(COURT_X, COURT_Y, COURT_W, COURT_H + 1, COLOR_LINE);
+  draw_lines(COLOR_LINE);
 
+  TFTscreen.setTextSize(1);
+  TFTscreen.setRotation(3); // Upside down
+  TFTscreen.text("AUSTRALIAN OPEN", 36, 18);
   TFTscreen.setRotation(1); // Normal orientation
-  TFTscreen.text("AUSTRALIAN  OPEN", 33, 18);
-  for (int row = 0; row < BALL_SIZE; row++) {
-    for (int col = 0; col < BALL_SIZE; col++) {
-      word px = pgm_read_word(img_ball + row * BALL_SIZE + col);
-      TFTscreen.drawPixel(col + 96, row + 19, px);
-    }
-  }
+  TFTscreen.text("AUSTRALIAN OPEN", 36, 19);
 } // draw_decorations

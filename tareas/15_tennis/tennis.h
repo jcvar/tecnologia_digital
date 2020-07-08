@@ -56,7 +56,7 @@
 
 // SCORE POSITIONS
 #define SCORE_LX 4
-#define SCORE_RX 136
+#define SCORE_RX 134
 
 typedef enum {	menu, new_game, serve_game, play_game, game_over} state_t;
 
