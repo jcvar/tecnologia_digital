@@ -4,9 +4,9 @@
 #include <avr/pgmspace.h>
 
 // TFT DEFINITIONS
-#define CS  10
-#define DC   9
-#define RST  8
+#define CS  9
+#define DC  10
+#define RST 8
 
 // 16-bit ('565') colors
 #define COLOR_BLACK 0x0000
