@@ -12,14 +12,10 @@
 #include <JC_Button.h>
 #include <TimerOne.h>
 
-#include "common.h"
-#include "digits_small.h"
-#include "bell.h"
-#include "clock.h"
-#include "clock_draw.h"
-
-#define MILLIS_LOOP 200
-#define BUZZER_PIN 3
+#include "digits_small.h" // Digits image
+#include "bell.h"         // Bell image
+#include "clock.h"        // Macros, types and signatures
+#include "clock_draw.h"   // drawing functions
 
 // Global structs, enum and button variables
 mytime_t clk = {0, 0, 0, true};
@@ -46,7 +42,7 @@ void setup() {
 
   force_draw(clk, false);
   force_draw(alarm, true);
-  
+
   // TimerOne
   Timer1.initialize(500000); //timing for 500ms
   Timer1.attachInterrupt(timer1_isr); //declare the Interrupt Service routine (ISR): timer1_isr
@@ -54,15 +50,12 @@ void setup() {
   mode_button.begin();
   next_button.begin();
   pinMode(BUZZER_PIN, OUTPUT); // To buzz!
-  
-  //Serial.begin(9600); // DEBUG
 } // END SETUP
 
 void loop() {
   static unsigned long loop_millis = 0;
   static bool mode_flag = false;
   static bool next_flag = false;
-
 
   // Read buttons
   mode_button.read();
@@ -76,7 +69,6 @@ void loop() {
 
   if (millis() - loop_millis > MILLIS_LOOP) {
     loop_millis = millis();
-
 
     // BUTTONS LOGIC
     if (mode_flag) {
@@ -108,7 +100,6 @@ void update_time() {
 void timer1_isr() {
   clk.active = !clk.active; // Alternate each 500ms
   digitalWrite(BUZZER_PIN, buzzer_on && clk.active);
-
   if (clk.active) {
     update_time();
     draw_time(clk);
@@ -129,7 +120,6 @@ state_t update_state(state_t old_state) {
 }
 
 void update_next(state_t cur_state) {
-  // TODO: Take a mytime_t parameter?
   switch (cur_state) {
     case normal:
       alarm.active = false;
@@ -156,9 +146,7 @@ void update_next(state_t cur_state) {
   }
 }
 
-
 void choose_draw(state_t cur_state) {
-  // TODO: Take a mytime_t parameter?
   switch (cur_state) {
     case normal:
       // DO NOTHING
