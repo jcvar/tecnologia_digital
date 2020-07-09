@@ -140,7 +140,7 @@ side_t check_goal(ball_t *b, court_t *crt) {
 
 void update_scores(player_t * win, player_t * lose) {
   if (lose->score >= s40 && win->score >= s30) { // Deuce logic
-    if (win->score == s30 or win->score == sNoAdv) { // if 30 or no adv, deuce
+    if (win->score == s30 || win->score == sNoAdv) { // if 30 or no adv, deuce
       win->score = sDeuce;
       lose->score = sDeuce;
     } else if (win->score == sAdv) { // if adv, game
