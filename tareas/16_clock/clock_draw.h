@@ -129,44 +129,51 @@ void draw_state_indicator(state_t state) {
   case set_alarm_active:
     pos_x = get_pos_x(second_tens);
     pos_y = get_pos_y(true);
-    cor = COLOR_RED;
+    cor = 0xFE24;
     break;
   case set_alarm_hour:
     pos_x = get_pos_x(hour_tens);
     pos_y = get_pos_y(true);
-    cor = COLOR_RED;
+    cor = 0xFE24;
     break;
   case set_alarm_minute:
     pos_x = get_pos_x(minute_tens);
     pos_y = get_pos_y(true);
-    cor = COLOR_RED;
+    cor = 0xFE24;
     break;
   case set_clock_hour:
     pos_x = get_pos_x(hour_tens);
     pos_y = get_pos_y(false);
-    cor = COLOR_GREEN;
+    cor = 0xFE24;
     break;
   case set_clock_minute:
     pos_x = get_pos_x(minute_tens);
     pos_y = get_pos_y(false);
-    cor = COLOR_GREEN;
+    cor = 0xFE24;
     break;
   case set_clock_second:
     pos_x = get_pos_x(second_tens);
     pos_y = get_pos_y(false);
-    cor = COLOR_GREEN;
+    cor = 0xFE24;
     break;
   default: // normal
     cor = COLOR_BLACK;
     break;
   }
   // Erase the previous indicators
-  TFTscreen.fillRect(COURT_X + 1, CLOCK_Y + DIGIT_H + 1, COURT_W - 2, BLOCK_H,
-                     COLOR_BLACK);
-  TFTscreen.fillRect(COURT_X + 1, ALARM_Y + DIGIT_H + 1, COURT_W - 2, BLOCK_H,
-                     COLOR_BLACK);
+  TFTscreen.fillRect(0, CLOCK_Y + DIGIT_H + 1, 160, BLOCK_H, COLOR_BLACK);
+  TFTscreen.fillRect(0, ALARM_Y + DIGIT_H + 1, 160, BLOCK_H, COLOR_BLACK);
   // Draw new indicator
   TFTscreen.fillRect(pos_x, pos_y + DIGIT_H + 1, BLOCK_W, BLOCK_H, cor);
+}
+
+void draw_dot(int x, int y) {
+  for (int row = 0; row < DOT_SIZE; row++) {
+    for (int col = 0; col < DOT_SIZE; col++) {
+      word p = pgm_read_word(dot + (row * DOT_SIZE + col));
+      TFTscreen.drawPixel(col + x, row + y, p);
+    }
+  }
 }
 
 void draw_dots() {
@@ -179,13 +186,4 @@ void draw_dots() {
   x = get_pos_x(dots_ms);
   draw_dot(x, CLOCK_Y + 4);
   draw_dot(x, CLOCK_Y + 12);
-}
-
-void draw_dot(int x, int y) {
-  for (int row = 0; row < DOT_SIZE; row++) {
-    for (int col = 0; col < DOT_SIZE; col++) {
-      word p = pgm_read_word(dot + (row * DOT_SIZE + col));
-      TFTscreen.drawPixel(col + x, row + y, p);
-    }
-  }
 }

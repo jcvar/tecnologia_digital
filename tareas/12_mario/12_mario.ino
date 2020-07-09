@@ -64,7 +64,7 @@ void endgame();
 void draw_score();
 
 void setup() {
-	TFTscreen.begin();
+	TFTscreen.begin(INITR_BLACKTAB);
 	TFTscreen.background(0, 0, 0);
 	
 	// Mario initialization
