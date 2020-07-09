@@ -12,8 +12,11 @@
 #include <JC_Button.h>
 #include <TimerOne.h>
 
-#include "digits_small.h" // Digits image
-#include "bell.h"         // Bell image
+// Images
+#include "digits_small.h"
+#include "bell.h"
+#include "dot.h"
+
 #include "clock.h"        // Macros, types and signatures
 #include "clock_draw.h"   // drawing functions
 
@@ -41,6 +44,7 @@ void setup() {
   TFTscreen.begin(INITR_BLACKTAB); // INITR_BLACKTAB for BGR
   TFTscreen.background(COLOR_BLACK);
 
+  draw_dots();
   force_draw(clk, false);
   force_draw(alarm, true);
 

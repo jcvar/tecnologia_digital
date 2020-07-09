@@ -41,7 +41,9 @@ typedef enum {
   minute_tens,
   minute_units,
   second_tens,
-  second_units
+  second_units,
+  dots_hm,
+  dots_ms
 } digit_t;
 
 // state_t: global clock states
