@@ -1,5 +1,7 @@
 #define MILLIS_LOOP 200
 #define BUZZER_PIN 3
+#define MODE_PIN 4
+#define NEXT_PIN 5
 
 /* TYPES */
 
