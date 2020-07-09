@@ -12,11 +12,10 @@
 #include <JC_Button.h>
 #include <TimerOne.h>
 
-#include "common.h"
-#include "digits_small.h"
-#include "bell.h"
-#include "clock.h"
-#include "clock_draw.h"
+#include "digits_small.h" // Digits image
+#include "bell.h"         // Bell image
+#include "clock.h"        // Macros, types and signatures
+#include "clock_draw.h"   // drawing functions
 
 // Global structs, enum and button variables
 mytime_t clk = {0, 0, 0, true};
@@ -51,16 +50,15 @@ void setup() {
   // Button
   mode_button.begin();
   next_button.begin();
-  pinMode(BUZZER_PIN, OUTPUT); // To buzz!
 
-  //Serial.begin(9600); // DEBUG
+  pinMode(BUZZER_PIN, OUTPUT); // To buzz!
 } // END SETUP
 
 void loop() {
   static unsigned long loop_millis = 0;
   static bool mode_flag = false;
   static bool next_flag = false;
-  
+
   // Read buttons
   mode_button.read();
   if (mode_button.wasPressed()) {
@@ -107,7 +105,6 @@ void update_time() {
 void timer1_isr() {
   clk.active = !clk.active; // Alternate each 500ms
   digitalWrite(BUZZER_PIN, buzzer_on && clk.active);
-
   if (clk.active) {
     update_time();
     must_draw = true;
@@ -128,7 +125,6 @@ state_t update_state(state_t old_state) {
 }
 
 void update_next(state_t cur_state) {
-  // TODO: Take a mytime_t parameter?
   switch (cur_state) {
     case normal:
       alarm.active = false;
@@ -155,9 +151,7 @@ void update_next(state_t cur_state) {
   }
 }
 
-
 void choose_draw(state_t cur_state) {
-  // TODO: Take a mytime_t parameter?
   switch (cur_state) {
     case normal:
       // DO NOTHING
