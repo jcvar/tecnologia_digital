@@ -4,8 +4,8 @@
 #include <avr/pgmspace.h>
 
 // TFT DEFINITIONS
-#define CS  10
-#define DC   9
+#define CS  9
+#define DC  10
 #define RST  8
 
 // 16-bit ('565') colors
@@ -32,4 +32,3 @@ typedef struct {
 	int left;
 	int right;
 } court_t;
-
