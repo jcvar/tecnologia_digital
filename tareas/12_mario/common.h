@@ -19,6 +19,9 @@
 #define COLOR_YELLOW 0xFFE0
 #define COLOR_ORANGE 0xFC00
 
+#define COLOR_BG 0x0000
+#define COLOR_FILTER 0x04E0
+
 /// Court parameters
 #define COURT_X 5
 #define COURT_Y 10
@@ -27,8 +30,27 @@
 
 // Court structure
 typedef struct {
-	int top;
-	int bottom;
-	int left;
-	int right;
+  int top;
+  int bottom;
+  int left;
+  int right;
 } court_t;
+
+// Block parameters
+#define BLOCK_SIZE 16
+#define BLOCK_MILLIS 100
+#define BLOCK_SPEED 2
+
+typedef struct {
+  int posX;
+  int posY;
+  int oldX;
+  int oldY;
+  bool alt;
+} block;
+
+// Function declatarions
+void check_collision(block);
+void draw_block(block);
+void endgame();
+void draw_score();
