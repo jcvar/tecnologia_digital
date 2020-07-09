@@ -22,9 +22,10 @@ mytime_t clk = {0, 0, 0, true};
 mytime_t alarm = {0, 0, 0, false};
 state_t clk_state = normal;
 bool buzzer_on = false;
+bool must_draw = false;
 // External declarations
-Button mode_button(4); // To cycle through the clock's states
-Button next_button(5);  // To cycle through time values
+Button mode_button(MODE_PIN); // To cycle through the clock's states
+Button next_button(NEXT_PIN);  // To cycle through time values
 
 /* FUNCTIONS */
 void timer1_isr();  // TimerOne Interrupt Service Routine
@@ -49,6 +50,7 @@ void setup() {
   // Button
   mode_button.begin();
   next_button.begin();
+
   pinMode(BUZZER_PIN, OUTPUT); // To buzz!
 } // END SETUP
 
@@ -59,10 +61,10 @@ void loop() {
 
   // Read buttons
   mode_button.read();
-  next_button.read();
   if (mode_button.wasPressed()) {
     mode_flag = true;
   }
+  next_button.read();
   if (next_button.wasPressed()) {
     next_flag = true;
   }
@@ -70,6 +72,10 @@ void loop() {
   if (millis() - loop_millis > MILLIS_LOOP) {
     loop_millis = millis();
 
+    if (must_draw) {
+      must_draw = false;
+      draw_time(clk);
+    }
     // BUTTONS LOGIC
     if (mode_flag) {
       clk_state = update_state(clk_state);
@@ -81,7 +87,6 @@ void loop() {
       choose_draw(clk_state);
       next_flag = false;
     }
-    //Serial.println(clk_state); // DEBUG
   }
 } // END LOOP
 
@@ -102,7 +107,7 @@ void timer1_isr() {
   digitalWrite(BUZZER_PIN, buzzer_on && clk.active);
   if (clk.active) {
     update_time();
-    draw_time(clk);
+    must_draw = true;
   }
 }
 

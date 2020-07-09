@@ -37,7 +37,6 @@
 
 // Game logic definitions
 #define MILLIS_GAME 50
-#define MAX_SCORE 5 // MAX: 9
 
 // Court parameters (Tennis court dimensions 1ft = 2px)
 #define COURT_W 156 // 39 * 4
