@@ -1,6 +1,7 @@
 // EXTERNAL LIBRARIES
 #include <SPI.h>
 #include <TFT.h>
+#include <JC_Button.h>
 #include <avr/pgmspace.h>
 
 #include "tennis_images.h"

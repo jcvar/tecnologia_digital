@@ -12,6 +12,8 @@
 #include "tennis.h"
 
 TFT TFTscreen = TFT(CS, DC, RST);
+Button btn(4);
+bool btn_flag = false;
 
 // court_t {top, bottom, left, right}. 1px smaller for collisions
 court_t court = {COURT_Y + 1, COURT_Y + COURT_H, COURT_X + 1, COURT_X + COURT_W - 1};
@@ -24,10 +26,8 @@ player_t playerR = {0, right, {court.right - PADDLE_W, court.top - 1, court.top}
 void setup() {
   TFTscreen.begin(INITR_BLACKTAB);
   //TFTscreen.begin();
-  
+  btn.begin();
   TFTscreen.stroke(COLOR_LINE);
-  
-  Serial.begin(9600);
 }
 
 void loop() {
@@ -51,6 +51,17 @@ void tennis_match() {
   static side_t goal_side = no_goal;
 
   switch (game_state) {
+    case menu:
+      btn.read();
+      if (btn.wasPressed()) {
+        btn_flag = true;
+      }
+      if (btn_flag) {
+        btn_flag = false;
+        game_state = play_game;
+      }
+      break;
+
     case new_game:
       draw_decorations();
       // Reset players' scores
@@ -59,8 +70,7 @@ void tennis_match() {
       draw_score(&playerL);
       draw_score(&playerR);
       reset_ball(&ball);
-      // TODO: ADD START GAME BUTTON
-      game_state = play_game;
+      game_state = menu;
       break;
 
     case serve_game:
@@ -95,9 +105,14 @@ void tennis_match() {
       break;
 
     case game_over:
-      // draw_win(goal_side);
-      // TODO: button
-      // game_state = new_game;
+      btn.read();
+      if (btn.wasPressed()) {
+        btn_flag = true;
+      }
+      if (btn_flag) {
+        btn_flag = false;
+        game_state = new_game;
+      }
       break;
   }
 } // tennis_match
@@ -139,11 +154,6 @@ void update_scores(player_t * win, player_t * lose) {
     win->score += 1;
   }
   draw_score(win);
-  
-  Serial.print("win: ");
-  Serial.println(win->score);
-  Serial.print("lose: ");
-  Serial.println(lose->score);
 }
 
 /*
