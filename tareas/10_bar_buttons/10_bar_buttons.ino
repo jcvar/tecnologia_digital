@@ -1,4 +1,10 @@
 /*
+Tarea 10
+Barra con botones
+
+Juan Camilo Vargas Q
+Sergio Alejandro Vargas Q
+
 Tecnologia Digital
 Universidad Nacional de Colombia
 2020-05-04
