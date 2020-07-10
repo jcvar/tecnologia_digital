@@ -9,7 +9,7 @@ Tecnologia Digital
 Universidad Nacional de Colombia
 2020-06-08
 */
-#include "../common.h" // Remember to copy before being submitted
+#include "common.h" // Remember to copy before being submitted
 #include "cola.h"
 
 TFT TFTscreen = TFT(CS, DC, RST);
@@ -47,7 +47,7 @@ const int fill_size[32] = {4, 5, 5, 5, 4, 4, 4, 3, 3, 3, 4, 4, 4, 5, 0, 0, 0, 0,
 void setup() {
 	TFTscreen.begin();
 	TFTscreen.background(0, 0, 0);
-
+	
 	// Draw court
 	TFTscreen.drawRect(COURT_X, COURT_Y, COURT_W, COURT_H, COLOR_RED);
 	// Draw background

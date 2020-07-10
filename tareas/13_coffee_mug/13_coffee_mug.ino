@@ -9,7 +9,7 @@ Tecnologia Digital
 Universidad Nacional de Colombia
 2020-06-03
 */
-#include "../common.h" // Remember to copy before being submitted
+#include "common.h" // Remember to copy before being submitted
 #include "coffee_mug.h"
 
 TFT TFTscreen = TFT(CS, DC, RST);
