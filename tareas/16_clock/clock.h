@@ -5,8 +5,8 @@
 
 // TFT DEFINITIONS
 #define CS  9
-#define DC   10
-#define RST  8
+#define DC  10
+#define RST 8
 
 // 16-bit ('565') colors
 #define COLOR_BLACK 0x0000
@@ -62,3 +62,5 @@ state_t update_state(state_t); // Handles the clock's FSM
 void update_next(state_t); // Changes values of mytime_t according to state_t
 
 void choose_draw(state_t); // Select which mytime_t to force_draw
+
+bool check_alarm();

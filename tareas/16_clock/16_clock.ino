@@ -30,15 +30,6 @@ bool must_draw = false;
 Button mode_button(MODE_PIN); // To cycle through the clock's states
 Button next_button(NEXT_PIN);  // To cycle through time values
 
-/* FUNCTIONS */
-void timer1_isr();  // TimerOne Interrupt Service Routine
-void update_time(); // Main clock logic. Increase values in the clk struct
-state_t update_state(state_t); // Handles the clock's FSM
-void update_next(state_t); // Changes values of mytime_t according to state_t
-void choose_draw(state_t); // Select which mytime_t to force_draw
-bool check_alarm();
-
-
 void setup() {
   //TFTscreen.begin(); // For simulator
   TFTscreen.begin(INITR_BLACKTAB); // INITR_BLACKTAB for BGR

@@ -15,15 +15,18 @@ TFT TFTscreen = TFT(CS, DC, RST);
 // Images
 #include "shells.h"
 #include "mario_img.h"
+// Mario class
 #include "mario.h"
 
-typedef enum {	s0, s1, s2}  block_state;
+// Mario instance
+Mario myMario;
 
+// Block/shell instances
 block block_g = {
-  COURT_X + COURT_W - BLOCK_SIZE - 1,
-  COURT_Y + COURT_H - BLOCK_SIZE - 1,
-  COURT_X + COURT_W - BLOCK_SIZE - 1,
-  COURT_Y + COURT_H - BLOCK_SIZE - 1,
+  COURT_X + COURT_W - BLOCK_SIZE - 1, // posX
+  COURT_Y + COURT_H - BLOCK_SIZE - 1, // posY
+  COURT_X + COURT_W - BLOCK_SIZE - 1, // oldX
+  COURT_Y + COURT_H - BLOCK_SIZE - 1, // oldY
   false
 };
 
@@ -34,8 +37,6 @@ block block_r = {
   COURT_Y + COURT_H - BLOCK_SIZE - 1,
   false
 };
-
-Mario myMario;
 
 bool game_over = false;
 int score = 0;

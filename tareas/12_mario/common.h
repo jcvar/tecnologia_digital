@@ -49,6 +49,8 @@ typedef struct {
   bool alt;
 } block;
 
+typedef enum {	s0, s1, s2}  block_state;
+
 // Function declatarions
 void check_collision(block);
 void draw_block(block);

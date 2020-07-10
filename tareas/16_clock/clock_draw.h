@@ -124,40 +124,34 @@ void force_draw(mytime_t t, bool is_alarm) {
 void draw_state_indicator(state_t state) {
   static int pos_x = CLOCK_X;
   static int pos_y = CLOCK_Y;
-  static word cor = COLOR_BLACK;
+  static word cor = 0xFE24; // Alarm yellow
   switch (state) {
   case set_alarm_active:
     pos_x = get_pos_x(second_tens);
     pos_y = get_pos_y(true);
-    cor = 0xFE24;
     break;
   case set_alarm_hour:
     pos_x = get_pos_x(hour_tens);
     pos_y = get_pos_y(true);
-    cor = 0xFE24;
     break;
   case set_alarm_minute:
     pos_x = get_pos_x(minute_tens);
     pos_y = get_pos_y(true);
-    cor = 0xFE24;
     break;
   case set_clock_hour:
     pos_x = get_pos_x(hour_tens);
     pos_y = get_pos_y(false);
-    cor = 0xFE24;
     break;
   case set_clock_minute:
     pos_x = get_pos_x(minute_tens);
     pos_y = get_pos_y(false);
-    cor = 0xFE24;
     break;
   case set_clock_second:
     pos_x = get_pos_x(second_tens);
     pos_y = get_pos_y(false);
-    cor = 0xFE24;
     break;
   default: // normal
-    cor = COLOR_BLACK;
+    cor = 0xFE24;
     break;
   }
   // Erase the previous indicators
