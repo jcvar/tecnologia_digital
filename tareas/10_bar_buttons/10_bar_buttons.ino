@@ -12,8 +12,8 @@ Universidad Nacional de Colombia
 #include <TFT.h>
 #include <SPI.h>
 // Screen definitions and initialization
-#define cs   10
-#define dc   9
+#define cs   9
+#define dc   10
 #define rst  8
 TFT TFTscreen = TFT(cs, dc, rst);
 
