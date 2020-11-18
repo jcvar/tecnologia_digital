@@ -2,7 +2,7 @@
 
 Grupo de trabajo #4
 - Juan Camilo Vargas Q. [jcvar](https://github.com/jcvar)
-- Sergio Alejandro Vargas Q. [savargasqu](https://github.com/savq)
+- Sergio Alejandro Vargas Q. [savq](https://github.com/savq)
 
 Facultad de Ingeniería\
 Universidad Nacional de Colombia\
